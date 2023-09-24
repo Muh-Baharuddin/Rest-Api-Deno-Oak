@@ -15,12 +15,6 @@ router
   .get("/", (context) => {
     context.response.body = "Hello World!";
   })
-  .get("/foo", (context) => {
-    context.response.body = "Hello Foo!";
-  })
-  .get("/bar", (context) => {
-    context.response.body = "Hello Bar!";
-  });
 
 router.use("/auth", authRouter.routes(), authRouter.allowedMethods());
 
