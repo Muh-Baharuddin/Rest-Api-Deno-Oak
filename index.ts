@@ -1,4 +1,4 @@
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import authRouter from "./auth/auth.controller.ts";
 
 const app = new Application();
@@ -13,23 +13,18 @@ app.use(async (ctx, next) => {
 
 router
   .get("/", (context) => {
-    context.response.body = "Hello World!"
+    context.response.body = "Hello World!";
   })
-
   .get("/foo", (context) => {
-    context.response.body = "Hello Foo!"
+    context.response.body = "Hello Foo!";
   })
-
   .get("/bar", (context) => {
-    context.response.body = "Hello Bar!"
-  })
+    context.response.body = "Hello Bar!";
+  });
 
-router.use("/auth",
-  authRouter.routes(),
-  authRouter.allowedMethods(),
-)
+router.use("/auth", authRouter.routes(), authRouter.allowedMethods());
 
-app.use(router.routes())
-app.use(router.allowedMethods())
+app.use(router.routes());
+app.use(router.allowedMethods());
 
 await app.listen({ port: 8000 });
