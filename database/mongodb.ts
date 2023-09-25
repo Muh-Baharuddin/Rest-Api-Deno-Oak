@@ -5,6 +5,14 @@ import {
 
 const client = new MongoClient();
 
+await client.connect(
+  "mongodb+srv://aldi:12345@testing-indonesia.uassntj.mongodb.net/martchi?authMechanism=SCRAM-SHA-1",
+);
+
+export const db = client.database("martchi");
+
+export default client;
+
 // await client.connect({
 //   db: "martchi",
 //   servers: [
@@ -20,11 +28,3 @@ const client = new MongoClient();
 //     mechanism: "SCRAM-SHA-1",
 //   },
 // });
-
-await client.connect(
-  "mongodb+srv://aldi:12345@testing-indonesia.uassntj.mongodb.net/martchi?authMechanism=SCRAM-SHA-1",
-);
-
-export const db = client.database("martchi");
-
-export default client;

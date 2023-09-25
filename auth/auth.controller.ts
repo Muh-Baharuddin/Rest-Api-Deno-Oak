@@ -36,14 +36,14 @@ authRouter
   .post("/register", async (context) => {
     const jsonData = await context.request.body().value;
 
-    const user = await userCollection.findOne();
+    const user = await userCollection.findOne(jsonData);
 
     if(user?.username === jsonData.username) {
       context.response.body = "ConflictException";
       context.throw(409);
     }
 
-    register(jsonData);
+    await register(jsonData);
     return context.response.body = jsonData;
   });
 

@@ -32,6 +32,5 @@ export const login = async (jsonData: LoginData): Promise<LoginResponse> => {
 }
 
 export const register = async (jsonData: UserProfile) => {
-
-
+  return await userCollection.insertOne(jsonData)
 }
