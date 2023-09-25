@@ -1,7 +1,8 @@
 export interface UserProfile {
   email: string,
   username: string,
-  password: string,
+  password: string;
+  version: string; 
 }
 
 export interface LoginData {

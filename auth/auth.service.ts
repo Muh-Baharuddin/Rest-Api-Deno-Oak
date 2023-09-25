@@ -2,6 +2,7 @@ import { create, getNumericDate } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
 import { users } from "./auth.controller.ts";
 import { db } from "../database/mongodb.ts";
+import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 
@@ -31,6 +32,15 @@ export const login = async (jsonData: LoginData): Promise<LoginResponse> => {
   };
 }
 
-export const register = async (jsonData: UserProfile) => {
-  return await userCollection.insertOne(jsonData)
+export const register = async (jsonData: UserProfile, context: Context) => {
+
+  const user = await userCollection.findOne({username: jsonData.username});
+
+  if(user?.username === jsonData.username) {
+    context.response.body = "Bad Request";
+    context.throw(400);
+  }
+
+  const newUser = await userCollection.insertOne(jsonData)
+  return newUser;
 }

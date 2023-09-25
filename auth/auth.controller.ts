@@ -34,16 +34,9 @@ authRouter
     };
   })
   .post("/register", async (context) => {
-    const jsonData = await context.request.body().value;
+    const jsonData: UserProfile = await context.request.body().value;
 
-    const user = await userCollection.findOne(jsonData);
-
-    if(user?.username === jsonData.username) {
-      context.response.body = "ConflictException";
-      context.throw(409);
-    }
-
-    await register(jsonData);
+    await register(jsonData, context);
     return context.response.body = jsonData;
   });
 
