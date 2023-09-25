@@ -3,8 +3,26 @@ import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
 import { users } from "./auth.controller.ts";
 import { db } from "../database/mongodb.ts";
 import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+import { insert } from "./auth.repository.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
+
+userCollection.createIndexes({
+  indexes: [
+    {
+      key: {
+        "username": 1,
+      },
+      name: "username"
+    },
+    {
+      key: {
+        "email": 1,
+      },
+      name: "index_email"
+    }
+  ]
+})
 
 export const login = async (jsonData: LoginData): Promise<LoginResponse> => {
   const key = await crypto.subtle.generateKey(
@@ -40,7 +58,7 @@ export const register = async (userData: UserProfile, context: Context) => {
     context.response.body = "Bad Request";
     context.throw(400);
   }
-
-  const newUser = await userCollection.insertOne(userData)
-  return newUser;
+  const coba = await insert(userData);
+  console.log("coba", coba)
+  return coba;
 }

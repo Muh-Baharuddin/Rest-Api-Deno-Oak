@@ -4,7 +4,6 @@ import { LoginResponse, UserProfile } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
 
 const testCollection =  db.collection<UserProfile>("test");
-const userCollection =  db.collection<UserProfile>("users");
 
 const authRouter = new Router();
 
@@ -33,7 +32,7 @@ authRouter
       refreshToken
     };
   })
-  .post("/register", async (context) => {
+  .post("/register", async (context): Promise<UserProfile> => {
     const userData: UserProfile = await context.request.body().value;
 
     await register(userData, context);
