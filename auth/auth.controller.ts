@@ -7,11 +7,6 @@ const testCollection =  db.collection<UserProfile>("test");
 
 const authRouter = new Router();
 
-export const users = {
-  email: "rio@gmail.com",
-  password: "1234",
-};
-
 authRouter
   .get("/", async (context) => {
     const allData = await testCollection.find().toArray();
@@ -20,12 +15,7 @@ authRouter
   .post("/login", async (context): Promise<LoginResponse> => {
     const userData = await context.request.body().value;
 
-    if( userData.email !== users.email || userData.password !== users.password) {
-      context.response.body = "Unauthorized";
-      context.throw(401)
-    }
-
-    const { token, refreshToken } = await login(userData);
+    const { token, refreshToken } = await login(userData, context);
 
     return context.response.body = {
       token,
