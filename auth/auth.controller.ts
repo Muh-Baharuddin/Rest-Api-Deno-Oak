@@ -1,14 +1,16 @@
 import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { create, getNumericDate } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
 import { db } from "../database/mongodb.ts";
+import { LoginResponse } from "./auth.types.ts";
+import { login } from "./auth.service.ts";
 
-const testCollection =  db.collection<any>("test");
+// deno-lint-ignore no-explicit-any
+const testCollection =  db.collection<any>("users");
 
 const authRouter = new Router();
 
-const users = {
-  username: "rio",
-  password: "123",
+export const users = {
+  email: "rio@gmail.com",
+  password: "1234",
 };
 
 authRouter
@@ -16,38 +18,20 @@ authRouter
     const allData = await testCollection.find().toArray();
     context.response.body = allData;
   })
-  .post("/login", async (context) => {
+  .post("/login", async (context): Promise<LoginResponse> => {
     const jsonData = await context.request.body().value;
 
-    if( jsonData.username !== users.username || jsonData.password !== users.password) {
-      context.response.status = 401,
+    if( jsonData.email !== users.email || jsonData.password !== users.password) {
       context.response.body = "Unauthorized";
-      return; 
+      context.throw(401)
     }
 
-    const key = await crypto.subtle.generateKey(
-      { name: "HMAC", hash: "SHA-512" },
-      true,
-      ["sign", "verify"],
-    );
+    const { token, refreshToken } = await login(jsonData);
 
-    const payload = {
-      users,
-      exp: getNumericDate(24 * 60 * 60),
-    };
-
-    const [token, refreshToken] = await Promise.all([
-      create({ alg: "HS512", typ: "JWT" }, payload, key),
-      create({ alg: "HS512", typ: "JWT" }, {
-        ...payload,
-        exp: getNumericDate(30 * 24 * 60 * 60)
-      }, key)
-    ]);
-
-    context.response.body = {
+    return context.response.body = {
       token,
       refreshToken
-    }    
+    };
   })
 
 export default authRouter;
