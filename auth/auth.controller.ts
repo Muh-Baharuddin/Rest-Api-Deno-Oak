@@ -4,7 +4,6 @@ import { LoginResponse, UserProfile } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
 
 const testCollection =  db.collection<UserProfile>("test");
-const userCollection =  db.collection<UserProfile>("users");
 
 const authRouter = new Router();
 
@@ -19,32 +18,25 @@ authRouter
     context.response.body = allData;
   })
   .post("/login", async (context): Promise<LoginResponse> => {
-    const jsonData = await context.request.body().value;
+    const userData = await context.request.body().value;
 
-    if( jsonData.email !== users.email || jsonData.password !== users.password) {
+    if( userData.email !== users.email || userData.password !== users.password) {
       context.response.body = "Unauthorized";
       context.throw(401)
     }
 
-    const { token, refreshToken } = await login(jsonData);
+    const { token, refreshToken } = await login(userData);
 
     return context.response.body = {
       token,
       refreshToken
     };
   })
-  .post("/register", async (context) => {
-    const jsonData = await context.request.body().value;
+  .post("/register", async (context): Promise<UserProfile> => {
+    const userData: UserProfile = await context.request.body().value;
 
-    const user = await userCollection.findOne();
-
-    if(user?.username === jsonData.username) {
-      context.response.body = "ConflictException";
-      context.throw(409);
-    }
-
-    register(jsonData);
-    return context.response.body = jsonData;
+    await register(userData, context);
+    return context.response.body = userData;
   });
 
 export default authRouter;
