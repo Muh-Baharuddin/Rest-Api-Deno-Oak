@@ -1,9 +1,10 @@
 import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { db } from "../database/mongodb.ts";
 import { LoginResponse, UserProfile } from "./auth.types.ts";
-import { login } from "./auth.service.ts";
+import { login, register } from "./auth.service.ts";
 
-const testCollection =  db.collection<UserProfile>("users");
+const testCollection =  db.collection<UserProfile>("test");
+const userCollection =  db.collection<UserProfile>("users");
 
 const authRouter = new Router();
 
@@ -22,7 +23,7 @@ authRouter
 
     if( jsonData.email !== users.email || jsonData.password !== users.password) {
       context.response.body = "Unauthorized";
-      context.throw(401)
+      context.throw(401);
     }
 
     const { token, refreshToken } = await login(jsonData);
@@ -32,5 +33,19 @@ authRouter
       refreshToken
     };
   })
+  .post("/register", async (context) => {
+    const jsonData = await context.request.body().value;
+
+    const user = await userCollection.findOne();
+
+    if(user?.username === jsonData.username) {
+      context.response.body = "ConflictException";
+      context.throw(409);
+    }
+
+    register(jsonData);
+    return context.response.body = jsonData;
+  });
 
 export default authRouter;
+
