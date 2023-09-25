@@ -23,7 +23,7 @@ authRouter
 
     if( jsonData.email !== users.email || jsonData.password !== users.password) {
       context.response.body = "Unauthorized";
-      context.throw(401);
+      context.throw(401)
     }
 
     const { token, refreshToken } = await login(jsonData);
