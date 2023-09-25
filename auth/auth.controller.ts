@@ -1,10 +1,9 @@
 import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { db } from "../database/mongodb.ts";
-import { LoginResponse } from "./auth.types.ts";
+import { LoginResponse, UserProfile } from "./auth.types.ts";
 import { login } from "./auth.service.ts";
 
-// deno-lint-ignore no-explicit-any
-const testCollection =  db.collection<any>("users");
+const testCollection =  db.collection<UserProfile>("users");
 
 const authRouter = new Router();
 
