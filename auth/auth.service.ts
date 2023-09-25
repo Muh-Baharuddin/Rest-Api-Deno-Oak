@@ -32,15 +32,15 @@ export const login = async (jsonData: LoginData): Promise<LoginResponse> => {
   };
 }
 
-export const register = async (jsonData: UserProfile, context: Context) => {
+export const register = async (userData: UserProfile, context: Context) => {
 
-  const user = await userCollection.findOne({username: jsonData.username});
+  const user = await userCollection.findOne({username: userData.username});
 
-  if(user?.username === jsonData.username) {
+  if(user?.username === userData.username) {
     context.response.body = "Bad Request";
     context.throw(400);
   }
 
-  const newUser = await userCollection.insertOne(jsonData)
+  const newUser = await userCollection.insertOne(userData)
   return newUser;
 }

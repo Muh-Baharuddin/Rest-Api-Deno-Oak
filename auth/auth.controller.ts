@@ -19,14 +19,14 @@ authRouter
     context.response.body = allData;
   })
   .post("/login", async (context): Promise<LoginResponse> => {
-    const jsonData = await context.request.body().value;
+    const userData = await context.request.body().value;
 
-    if( jsonData.email !== users.email || jsonData.password !== users.password) {
+    if( userData.email !== users.email || userData.password !== users.password) {
       context.response.body = "Unauthorized";
       context.throw(401)
     }
 
-    const { token, refreshToken } = await login(jsonData);
+    const { token, refreshToken } = await login(userData);
 
     return context.response.body = {
       token,
@@ -34,10 +34,10 @@ authRouter
     };
   })
   .post("/register", async (context) => {
-    const jsonData: UserProfile = await context.request.body().value;
+    const userData: UserProfile = await context.request.body().value;
 
-    await register(jsonData, context);
-    return context.response.body = jsonData;
+    await register(userData, context);
+    return context.response.body = userData;
   });
 
 export default authRouter;
