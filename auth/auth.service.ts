@@ -1,9 +1,8 @@
 import { create, getNumericDate } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
-import { users } from "./auth.controller.ts";
 import { db } from "../database/mongodb.ts";
 import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { insert } from "./auth.repository.ts";
+import { findUser, insert } from "./auth.repository.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 
@@ -24,7 +23,15 @@ userCollection.createIndexes({
   ]
 })
 
-export const login = async (jsonData: LoginData): Promise<LoginResponse> => {
+export const login = async (userData: LoginData, context: Context): Promise<LoginResponse> => {
+
+  const user = await findUser(userData);
+
+  if( userData.email !== user?.email || userData.password !== user?.password) {
+    context.response.body = "Unauthorized";
+    context.throw(401)
+  }
+
   const key = await crypto.subtle.generateKey(
     { name: "HMAC", hash: "SHA-512" },
     true,
@@ -32,7 +39,7 @@ export const login = async (jsonData: LoginData): Promise<LoginResponse> => {
   );
 
   const payload = {
-    users,
+    user,
     exp: getNumericDate(24 * 60 * 60),
   };
 
@@ -58,7 +65,5 @@ export const register = async (userData: UserProfile, context: Context) => {
     context.response.body = "Bad Request";
     context.throw(400);
   }
-  const coba = await insert(userData);
-  console.log("coba", coba)
-  return coba;
+  return await insert(userData);
 }
