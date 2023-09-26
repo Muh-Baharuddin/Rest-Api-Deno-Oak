@@ -1,18 +1,11 @@
 import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.22.2/mod.ts";
-import { db } from "../database/mongodb.ts";
 import { LoginResponse, UserProfile } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
-
-const testCollection =  db.collection<UserProfile>("test");
 
 const authRouter = new Router();
 
 authRouter
-  .get("/", async (context) => {
-    const allData = await testCollection.find().toArray();
-    context.response.body = allData;
-  })
   .post("/login", async (context): Promise<LoginResponse> => {
 
     const userValidateLogin = z.object({
