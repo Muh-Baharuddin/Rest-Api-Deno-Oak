@@ -1,5 +1,6 @@
 import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import authRouter from "./auth/auth.controller.ts";
+import usersRouter from "./users/users.controller.ts";
 
 const app = new Application();
 const router = new Router();
@@ -17,6 +18,7 @@ router
   })
 
 router.use("/auth", authRouter.routes(), authRouter.allowedMethods());
+router.use("/users", usersRouter.routes(), authRouter.allowedMethods());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
