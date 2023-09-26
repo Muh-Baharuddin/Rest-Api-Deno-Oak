@@ -3,7 +3,7 @@ import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
 import { db } from "../database/mongodb.ts";
-import { findUser, insert } from "./auth.repository.ts";
+import { findByEmail, insert } from "./auth.repository.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 
@@ -26,9 +26,16 @@ userCollection.createIndexes({
 
 export const login = async (userData: LoginData, context: Context): Promise<LoginResponse> => {
 
-  const user = await findUser(userData);
+  const user = await findByEmail(userData.email);
 
-  if( userData.email !== user?.email || userData.password !== user?.password) {
+  if (user == undefined) {
+    context.response.body = "Unauthorized";
+    context.throw(401)
+  }
+
+  const comparePass = await bcrypt.compare(userData.password, user.password);
+
+  if( userData.email !== user?.email || !comparePass) {
     context.response.body = "Unauthorized";
     context.throw(401)
   }
