@@ -69,7 +69,7 @@ export const register = async (userData: UserProfile, context: Context) => {
 
   const user = await userCollection.findOne({username: userData.username});
 
-  if(user?.username === userData.username) {
+  if(user?.username === userData.username || user?.email === userData.email) {
     context.response.body = "Bad Request";
     context.throw(400);
   }
