@@ -1,7 +1,8 @@
 import { create, getNumericDate } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
+import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
 import { db } from "../database/mongodb.ts";
-import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { findUser, insert } from "./auth.repository.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
@@ -65,5 +66,9 @@ export const register = async (userData: UserProfile, context: Context) => {
     context.response.body = "Bad Request";
     context.throw(400);
   }
+
+  const salt = await bcrypt.genSalt(8);
+  userData.password = await bcrypt.hash(userData.password, salt);
+
   return await insert(userData);
 }
