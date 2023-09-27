@@ -1,0 +1,14 @@
+{
+  "imports": {
+    "$mongo/": "https://deno.land/x/mongo@v0.32.0/",
+    "$oak/": "https://deno.land/x/oak@v12.6.1/",
+    "$zod/": "https://deno.land/x/zod@v3.22.2/",
+    "$djwt/": "https://deno.land/x/djwt@v2.9.1/",
+    "$bcrypt/": "https://deno.land/x/bcrypt@v0.4.1/",
+    "/": "./",
+    "./": "./"
+  },
+  "tasks": {
+    "dev": "deno run --watch --allow-net --allow-run index.ts"
+  }
+}
