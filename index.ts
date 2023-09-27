@@ -16,6 +16,7 @@ router
   .get("/", (context) => {
     context.response.body = "Hello World!";
   })
+  
 
 router.use("/auth", authRouter.routes(), authRouter.allowedMethods());
 router.use("/users", usersRouter.routes(), authRouter.allowedMethods());

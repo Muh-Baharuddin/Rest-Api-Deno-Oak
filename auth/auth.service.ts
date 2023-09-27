@@ -4,6 +4,7 @@ import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
 import { db } from "../database/mongodb.ts";
 import { findByEmail, insert } from "./auth.repository.ts";
+import { key } from "../utils/jwt.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 
@@ -39,12 +40,6 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
     context.response.body = "Unauthorized";
     context.throw(401)
   }
-
-  const key = await crypto.subtle.generateKey(
-    { name: "HMAC", hash: "SHA-512" },
-    true,
-    ["sign", "verify"],
-  );
 
   const payload = {
     user,

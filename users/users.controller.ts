@@ -2,11 +2,12 @@ import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.22.2/mod.ts";
 import { edit, getAll } from "./users.service.ts";
 import { UserProfile } from "../auth/auth.types.ts";
+import { authMiddleware } from "../middlewares/jwt.ts";
 
 const usersRouter = new Router();
 
 usersRouter
-  .get("/", async (context): Promise<UserProfile[]> => {
+  .get("/", authMiddleware ,async (context): Promise<UserProfile[]> => {
     const allData = await getAll()
     return context.response.body = allData;
   })
