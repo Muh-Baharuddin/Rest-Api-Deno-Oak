@@ -18,3 +18,10 @@ export const userEdit = async (userData: UserProfile, _id: string) => {
     { $set: userData }
   )
 }
+
+export const deleteUser = async (_id: string) => {
+  await userCollection.deleteOne({ _id: {$eq: new ObjectId(_id)}})
+  return {
+    message: "delete success"
+  }
+}

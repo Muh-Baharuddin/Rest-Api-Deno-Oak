@@ -1,6 +1,6 @@
 import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.22.2/mod.ts";
-import { edit, getAll, getUserProfile } from "./users.service.ts";
+import { edit, getAll, getUserProfile, removeUser } from "./users.service.ts";
 import { UserProfile } from "../auth/auth.types.ts";
 import { authMiddleware } from "../middlewares/jwt.ts";
 import { AppContext } from "../utils/types.ts";
@@ -33,6 +33,12 @@ usersRouter
     const updateData = await edit(userData, userid, context);
 
     return context.response.body = updateData;
+  })
+  .delete("/profile", authMiddleware, async(context: AppContext) => {
+    const userid = context?.user?._id!;
+    const deleted = await removeUser(userid, context);
+
+    return context.response.body = deleted;
   })
 
 export default usersRouter;
