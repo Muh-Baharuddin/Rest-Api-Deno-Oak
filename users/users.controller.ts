@@ -1,6 +1,6 @@
 import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.22.2/mod.ts";
-import { edit, getAll } from "./users.service.ts";
+import { edit, getAll, getUserProfile } from "./users.service.ts";
 import { UserProfile } from "../auth/auth.types.ts";
 import { authMiddleware } from "../middlewares/jwt.ts";
 import { AppContext } from "../utils/types.ts";
@@ -11,6 +11,12 @@ usersRouter
   .get("/", authMiddleware ,async (context): Promise<UserProfile[]> => {
     const allData = await getAll()
     return context.response.body = allData;
+  })
+  .get("/profile", authMiddleware ,async (context: AppContext): Promise<UserProfile | undefined> => {
+    const userid = context?.user?._id!;
+
+    const userProfile = await getUserProfile(userid)
+    return context.response.body = userProfile;
   })
   .put("/profile", authMiddleware, async(context: AppContext) => {
 
@@ -25,7 +31,7 @@ usersRouter
     userValidate.parse(userData);
 
     const updateData = await edit(userData, userid, context);
-    
+
     return context.response.body = updateData;
   })
 

@@ -6,6 +6,10 @@ export const getAll = async (): Promise<UserProfile[]> => {
   return await getAllUsers();
 }
 
+export const getUserProfile = async (_id: string): Promise<UserProfile | undefined> => {
+  return await getUserById(_id);
+}
+
 export const edit = async (userData: UserProfile, _id: string, context: Context) => {
   const user = await getUserById(_id)
   
