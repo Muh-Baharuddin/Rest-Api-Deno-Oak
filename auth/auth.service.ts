@@ -1,10 +1,10 @@
-import { create, getNumericDate } from "https://deno.land/x/djwt@v2.9.1/mod.ts";
-import { Context } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
+import { create, getNumericDate } from "$djwt/mod.ts";
+import { Context } from "$oak/mod.ts";
+import * as bcrypt from "$bcrypt/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
-import { db } from "../database/mongodb.ts";
+import { db } from "/database/mongodb.ts";
 import { findByEmail, insert } from "./auth.repository.ts";
-import { key } from "../utils/jwt.ts";
+import { key } from "/utils/jwt.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 

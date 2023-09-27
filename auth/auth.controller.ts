@@ -1,5 +1,5 @@
-import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { z } from "https://deno.land/x/zod@v3.22.2/mod.ts";
+import { Router } from "$oak/mod.ts";
+import { z } from "$zod/mod.ts";
 import { LoginResponse, UserProfile } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
 

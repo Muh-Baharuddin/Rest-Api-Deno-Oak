@@ -1,4 +1,4 @@
-import { Application, Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
+import { Application, Router } from "$oak/mod.ts";
 import authRouter from "./auth/auth.controller.ts";
 import usersRouter from "./users/users.controller.ts";
 

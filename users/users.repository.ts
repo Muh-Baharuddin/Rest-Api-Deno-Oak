@@ -1,6 +1,6 @@
-import { ObjectId } from "https://deno.land/x/mongo@v0.32.0/mod.ts";
-import { UserProfile } from "../auth/auth.types.ts";
-import { db } from "../database/mongodb.ts";
+import { ObjectId } from "$mongo/mod.ts";
+import { UserProfile } from "/auth/auth.types.ts";
+import { db } from "/database/mongodb.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 

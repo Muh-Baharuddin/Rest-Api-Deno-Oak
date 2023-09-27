@@ -1,4 +1,4 @@
-import { db } from "../database/mongodb.ts";
+import { db } from "/database/mongodb.ts";
 import { UserProfile } from "./auth.types.ts";
 
 const userCollection =  db.collection<UserProfile>("users");

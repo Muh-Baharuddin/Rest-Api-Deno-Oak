@@ -1,9 +1,9 @@
-import { Router } from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { z } from "https://deno.land/x/zod@v3.22.2/mod.ts";
+import { Router } from "$oak/mod.ts";
+import { z } from "$zod/mod.ts";
 import { edit, getAll, getUserProfile, removeUser } from "./users.service.ts";
-import { UserProfile } from "../auth/auth.types.ts";
-import { authMiddleware } from "../middlewares/jwt.ts";
-import { AppContext } from "../utils/types.ts";
+import { UserProfile } from "/auth/auth.types.ts";
+import { authMiddleware } from "/middlewares/jwt.ts";
+import { AppContext } from "/utils/types.ts";
 
 const usersRouter = new Router();
 
