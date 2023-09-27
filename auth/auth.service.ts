@@ -4,6 +4,7 @@ import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
 import { db } from "../database/mongodb.ts";
 import { findByEmail, insert } from "./auth.repository.ts";
+import { key } from "../utils/jwt.ts";
 
 const userCollection =  db.collection<UserProfile>("users");
 
@@ -26,25 +27,25 @@ userCollection.createIndexes({
 
 export const login = async (userData: LoginData, context: Context): Promise<LoginResponse> => {
 
-  const user = await findByEmail(userData.email);
+  const findUser = await findByEmail(userData.email);
 
-  if (user == undefined) {
+  if (findUser == undefined) {
     context.response.body = "Unauthorized";
     context.throw(401)
   }
 
-  const comparePass = await bcrypt.compare(userData.password, user.password);
+  const comparePass = await bcrypt.compare(userData.password, findUser.password!);
 
-  if( userData.email !== user?.email || !comparePass) {
+  if( userData.email !== findUser?.email || !comparePass) {
     context.response.body = "Unauthorized";
     context.throw(401)
   }
 
-  const key = await crypto.subtle.generateKey(
-    { name: "HMAC", hash: "SHA-512" },
-    true,
-    ["sign", "verify"],
-  );
+  const user = {
+    _id: findUser?._id,
+    email: findUser?.email,
+    username: findUser?.username,
+  }
 
   const payload = {
     user,
@@ -75,7 +76,7 @@ export const register = async (userData: UserProfile, context: Context) => {
   }
 
   const salt = await bcrypt.genSalt(8);
-  userData.password = await bcrypt.hash(userData.password, salt);
+  userData.password = await bcrypt.hash(userData.password!, salt);
 
   return await insert(userData);
 }

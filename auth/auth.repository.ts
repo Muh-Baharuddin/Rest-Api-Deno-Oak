@@ -7,7 +7,6 @@ export const findByEmail = async(email: string): Promise<UserProfile | undefined
   return await userCollection.findOne({
     email,
   });
-  
 }
 
 export const insert = async(userData: UserProfile) => {
