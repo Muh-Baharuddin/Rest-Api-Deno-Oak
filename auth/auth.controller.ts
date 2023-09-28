@@ -7,7 +7,6 @@ const authRouter = new Router();
 
 authRouter
   .post("/login", async (context): Promise<LoginResponse> => {
-
     const userValidateLogin = z.object({
       email: z.string().email(),
       password: z.string().min(6)
@@ -15,7 +14,19 @@ authRouter
 
     const userData = await context.request.body().value;
 
-    userValidateLogin.parse(userData);
+    try {
+      userValidateLogin.parse(userData);
+    } catch(err) {
+      if (err instanceof z.ZodError) {
+        const errors = err.issues.map((error) => {
+          return {
+            field: error.path[0],
+            message: error.message
+          }
+        });
+        context.throw(400, JSON.stringify(errors));
+      }
+    }
 
     const { token, refreshToken } = await login(userData, context);
 
