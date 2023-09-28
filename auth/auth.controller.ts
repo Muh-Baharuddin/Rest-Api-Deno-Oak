@@ -24,7 +24,12 @@ authRouter
             message: error.message
           }
         });
-        context.throw(400, JSON.stringify(errors));
+        const finalObj: Record<string, string> = {};
+        for(let i = 0; i < errors.length; i++ ) {
+          console.log("key", errors[i].field)
+          finalObj[errors[i].field] = errors[i].message
+        }
+        context.throw(400, JSON.stringify(finalObj));
       }
     }
 
