@@ -1,17 +1,12 @@
 import { Router } from "$oak/mod.ts";
-import { z } from "$zod/mod.ts";
 import { validate } from "/middlewares/validate.ts";
 import { edit, getAll, getUserProfile, removeUser } from "./users.service.ts";
 import { UserProfile } from "/auth/auth.types.ts";
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { AppContext } from "/utils/types.ts";
+import { userValidate } from "/users/users.validation.ts";
 
 const usersRouter = new Router();
-
-const userValidate = z.object({
-  email: z.string().email(),
-  username: z.string().min(3),
-})
 
 usersRouter
   .get("/", authMiddleware ,async (context): Promise<UserProfile[]> => {
