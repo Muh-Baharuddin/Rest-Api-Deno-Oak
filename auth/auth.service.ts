@@ -1,12 +1,13 @@
 import { create, getNumericDate } from "$djwt/mod.ts";
 import { Context } from "$oak/mod.ts";
 import * as bcrypt from "$bcrypt/mod.ts";
-import { LoginData, LoginResponse, UserProfile } from "./auth.types.ts";
+import { LoginData, LoginResponse } from "./auth.types.ts";
 import { db } from "/database/mongodb.ts";
 import { findByEmail, insert } from "./auth.repository.ts";
 import { key } from "/utils/jwt.ts";
+import { User } from "/users/user.types.ts";
 
-const userCollection =  db.collection<UserProfile>("users");
+const userCollection =  db.collection<User>("users");
 
 userCollection.createIndexes({
   indexes: [
@@ -66,7 +67,7 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
   };
 }
 
-export const register = async (userData: UserProfile, context: Context) => {
+export const register = async (userData: User, context: Context) => {
 
   const user = await userCollection.findOne({username: userData.username});
 

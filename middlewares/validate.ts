@@ -1,8 +1,8 @@
 import { Next } from "$oak/mod.ts";
-import { ZodRawShape, z } from "$zod/mod.ts";
+import { ZodRawShape, ZodTypeAny, z } from "$zod/mod.ts";
 import { AppContext } from "/utils/types.ts";
 
-export const validate = (vobj: z.ZodObject<ZodRawShape>) => {
+export const validate = (vobj: z.ZodObject<ZodRawShape> | z.ZodArray<ZodTypeAny>) => {
   return async (ctx: AppContext, next: Next) => {
     const dataBody = await ctx.request.body().value;
 
@@ -16,10 +16,12 @@ export const validate = (vobj: z.ZodObject<ZodRawShape>) => {
             message: error.message
           }
         });
+        console.log("ERROR XXXXX", errors)
         const finalObj: Record<string, string> = {};
         for(let i = 0; i < errors.length; i++ ) {
           finalObj[errors[i].field] = errors[i].message
         }
+        console.log("INI ERROR")
         ctx.throw(400, JSON.stringify(finalObj));
       }
     }

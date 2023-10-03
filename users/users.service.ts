@@ -1,16 +1,16 @@
 import { Context } from "$oak/mod.ts";
-import { UserProfile } from "/auth/auth.types.ts";
-import { deleteUser, getAllUsers, getUserById, userEdit } from "./users.repository.ts";
+import { Address, User } from "/users/user.types.ts";
+import { deleteUser, getAllUsers, getUserById, userAddress, userEdit } from "./users.repository.ts";
 
-export const getAll = async (): Promise<UserProfile[]> => {
+export const getAll = async (): Promise<User[]> => {
   return await getAllUsers();
 }
 
-export const getUserProfile = async (_id: string): Promise<UserProfile | undefined> => {
+export const getUserProfile = async (_id: string): Promise<User | undefined> => {
   return await getUserById(_id);
 }
 
-export const edit = async (userData: UserProfile, _id: string, context: Context) => {
+export const edit = async (userData: User, _id: string, context: Context) => {
   const user = await getUserById(_id)
   
   if (user == undefined) {
@@ -29,4 +29,13 @@ export const removeUser = async (_id: string, context: Context) => {
     context.throw(401)
   }
   return await deleteUser(_id)
+}
+
+export const addAddress = async (address: Address, _id: string, context: Context) => {
+  const user = await getUserById(_id)
+
+  if (user == undefined) {
+    context.throw(401)
+  }
+  return await userAddress(address, _id);
 }
