@@ -19,7 +19,7 @@ router
   
 
 router.use("/auth", authRouter.routes(), authRouter.allowedMethods());
-router.use("/users", usersRouter.routes(), authRouter.allowedMethods());
+router.use("/users", usersRouter.routes(), usersRouter.allowedMethods());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
