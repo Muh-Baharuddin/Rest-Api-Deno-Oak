@@ -38,3 +38,17 @@ export const userAddress = async (address: Address, _id: string) => {
     message: "add new address success"
   }
 }
+
+export const userEditAddress = async (address: Address, userId: string, addressId: string) => {
+  address._id = addressId;
+  await userCollection.updateOne(
+    { 
+      _id: new ObjectId(userId),
+      'addresses._id': new ObjectId(addressId)
+    } as unknown as User,
+    { $set: {"addresses.$": address} }
+  )
+  return {
+    message: "edit address success"
+  }
+}

@@ -1,6 +1,6 @@
 import { Context } from "$oak/mod.ts";
 import { Address, User } from "./users.types.ts";
-import { deleteUser, getAllUsers, getUserById, userAddress, userEdit } from "./users.repository.ts";
+import { deleteUser, getAllUsers, getUserById, userAddress, userEdit, userEditAddress } from "./users.repository.ts";
 
 export const getAll = async (): Promise<User[]> => {
   return await getAllUsers();
@@ -38,4 +38,12 @@ export const addAddress = async (address: Address, _id: string, context: Context
     context.throw(401)
   }
   return await userAddress(address, _id);
+}
+
+export const editAddress = async (address: Address, userId: string, addressId: string) => {
+  const _user = await getUserById(userId)
+  // if (user == undefined) {
+  //   context.throw(401)
+  // }
+  return await userEditAddress(address, userId, addressId);
 }
