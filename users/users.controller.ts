@@ -46,11 +46,16 @@ usersRouter
     const newAddress = await addAddress(address, userid, context);
     return context.response.body = newAddress;
   })
-  .put("/address/:id", authMiddleware, validate(addressValidate), async (context) : Promise<{ message: string}> => {
+  // .put("/address/:id", authMiddleware, validate(addressValidate), async (context) : Promise<{ message: string}> => {
+  //   const address: Address = await context.request.body().value;
+  //   const userId = (context as AppContext).user?._id;
+  //   const addressId = context?.params?.id
+  //   const editedAddress = await editAddress(address, userId!, addressId);
+  //   return context.response.body = editedAddress;
+  // });
+    .put("/address/:id", authMiddleware, validate(addressValidate), async (context) : Promise<{ message: string}> => {
     const address: Address = await context.request.body().value;
-    const userId = (context as AppContext).user?._id;
-    const addressId = context?.params?.id
-    const editedAddress = await editAddress(address, userId!, addressId);
+    const editedAddress = await editAddress(address, context);
     return context.response.body = editedAddress;
   });
 
