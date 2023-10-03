@@ -1,5 +1,5 @@
 import { Context } from "$oak/mod.ts";
-import { Address, User } from "/users/user.types.ts";
+import { Address, User } from "./users.types.ts";
 import { deleteUser, getAllUsers, getUserById, userAddress, userEdit } from "./users.repository.ts";
 
 export const getAll = async (): Promise<User[]> => {

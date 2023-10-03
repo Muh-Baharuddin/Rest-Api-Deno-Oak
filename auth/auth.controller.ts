@@ -3,7 +3,7 @@ import { LoginResponse } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
 import { validate } from "/middlewares/validate.ts";
 import { userValidateLogin, userValidateRegister } from "/auth/auth.validation.ts";
-import { User } from "/users/user.types.ts";
+import { User } from "/users/users.types.ts";
 
 const authRouter = new Router();
 

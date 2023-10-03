@@ -1,5 +1,5 @@
 import { ObjectId } from "$mongo/mod.ts";
-import { Address, User } from "/users/user.types.ts";
+import { Address, User } from "./users.types.ts";
 import { db } from "/database/mongodb.ts";
 
 const userCollection =  db.collection<User>("users");
@@ -27,9 +27,12 @@ export const deleteUser = async (_id: string) => {
 }
 
 export const userAddress = async (address: Address, _id: string) => {
+  const addressId = new ObjectId();
+  address._id = addressId;
+
   await userCollection.updateOne(
     { _id: {$eq: new ObjectId(_id)}},
-    { $addToSet: {addresses: address}}
+    { $addToSet: {addresses: address}},
   )
   return {
     message: "add new address success"

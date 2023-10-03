@@ -5,7 +5,7 @@ import { LoginData, LoginResponse } from "./auth.types.ts";
 import { db } from "/database/mongodb.ts";
 import { findByEmail, insert } from "./auth.repository.ts";
 import { key } from "/utils/jwt.ts";
-import { User } from "/users/user.types.ts";
+import { User } from "../users/users.types.ts";
 
 const userCollection =  db.collection<User>("users");
 

@@ -7,6 +7,7 @@ export interface User {
 }
 
 export interface Address {
+  _id: string;
   reciever: string;
   contact : string;
   streetName: string;
