@@ -1,6 +1,6 @@
 import { verify } from "$djwt/mod.ts";
 import { Next } from "$oak/mod.ts";
-import { User } from "/users/user.types.ts";
+import { User } from "../users/users.types.ts";
 import { key } from "/utils/jwt.ts";
 import { AppContext } from "/utils/types.ts";
 

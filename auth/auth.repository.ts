@@ -1,4 +1,4 @@
-import { User } from "/users/user.types.ts";
+import { User } from "../users/users.types.ts";
 import { db } from "/database/mongodb.ts";
 
 const userCollection =  db.collection<User>("users");

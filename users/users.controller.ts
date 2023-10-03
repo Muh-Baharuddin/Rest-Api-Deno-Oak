@@ -4,7 +4,7 @@ import { addAddress, edit, getAll, getUserProfile, removeUser } from "./users.se
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { AppContext } from "/utils/types.ts";
 import { addressValidate, userValidate } from "/users/users.validation.ts";
-import { Address, User } from "/users/user.types.ts";
+import { Address, User } from "./users.types.ts";
 
 const usersRouter = new Router();
 
