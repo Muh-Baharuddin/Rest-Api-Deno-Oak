@@ -55,11 +55,3 @@ export const editAddress = async (address: Address, context: RouterContext<"/add
 
   return await userEditAddress(address, userId, addressId);
 }
-
-// export const editAddress = async (address: Address, userId: string, addressId: string) => {
-//   const _user = await getUserById(userId)
-//   if (user == undefined) {
-//     context.throw(401)
-//   }
-//   return await userEditAddress(address, userId, addressId);
-// }

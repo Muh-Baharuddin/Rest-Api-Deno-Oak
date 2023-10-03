@@ -5,8 +5,11 @@ import { authMiddleware } from "/middlewares/jwt.ts";
 import { AppContext } from "/utils/types.ts";
 import { addressValidate, userValidate } from "/users/users.validation.ts";
 import { Address, User } from "./users.types.ts";
+import usersAddressRouter from "/users/address/address.controller.ts";
 
 const usersRouter = new Router();
+
+usersRouter.use("/address", usersAddressRouter.routes(), usersAddressRouter.allowedMethods());
 
 usersRouter
   .get("/", authMiddleware ,async (context): Promise<User[]> => {
