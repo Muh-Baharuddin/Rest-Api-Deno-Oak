@@ -50,7 +50,6 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
     username: findUser?.username,
   }
 
-
   const payload = {
     user,
     exp: getNumericDate(parseInt(env["JWT_EXPIRED_TOKEN"])),
@@ -60,7 +59,7 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
     create({ alg: "HS512", typ: "JWT" }, payload, key),
     create({ alg: "HS512", typ: "JWT" }, {
       ...payload,
-      exp: getNumericDate(parseInt(env["JWT_EXPIRED_TOKEN_REFRESH"]))
+      exp: getNumericDate(parseInt(env["JWT_EXPIRED_REFRESH_TOKEN"]))
     }, key)
   ]);
 
