@@ -5,11 +5,23 @@ import { db } from "/database/mongodb.ts";
 const userCollection =  db.collection<User>("users");
 
 export const getAllUsers = async (): Promise<User[]> => {
-  return await userCollection.find().toArray();
+  return await userCollection.find(
+    {},
+    {projection: {
+      username: 1,
+      email: 1 
+    }}
+  ).toArray();
 }
 
 export const getUserById = async (_id: string): Promise<User | undefined> => {
-  return await userCollection.findOne({ _id: new ObjectId(_id) });
+  return await userCollection.findOne(
+    { _id: new ObjectId(_id) },
+    {projection: {
+      username: 1,
+      email: 1 
+    }}
+  );
 }
 
 export const userEdit = async (userData: User, _id: string) => {
@@ -22,7 +34,7 @@ export const userEdit = async (userData: User, _id: string) => {
 export const deleteUser = async (_id: string) => {
   await userCollection.deleteOne({ _id: {$eq: new ObjectId(_id)}})
   return {
-    message: "delete success"
+    message: "delete user success"
   }
 }
 
