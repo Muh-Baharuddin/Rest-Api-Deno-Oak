@@ -23,7 +23,6 @@ export const edit = async (userData: User, _id: string, context: Context) => {
 
 export const removeUser = async (_id: string, context: Context) => {
   const user = await getUserById(_id)
-  console.log("user",user)
   
   if (user == undefined) {
     context.response.body = "Unauthorized";

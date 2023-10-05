@@ -18,29 +18,23 @@ usersRouter
   })
   .get("/profile", authMiddleware ,async (context: AppContext): Promise<User | undefined> => {
     const userid = context?.user?._id!;
-
     const userProfile = await getUserProfile(userid)
     return context.response.body = userProfile;
   })
   .get("/profile", authMiddleware ,async (context: AppContext): Promise<User | undefined> => {
     const userid = context?.user?._id!;
-
     const userProfile = await getUserProfile(userid)
     return context.response.body = userProfile;
   })
   .put("/profile", authMiddleware, validate(userValidate), async(context: AppContext) => {
     const userid = context?.user?._id!;
-
     const userData: User = await context.request.body().value;
-
     const updateData = await edit(userData, userid, context);
-
     return context.response.body = updateData;
   })
   .delete("/profile", authMiddleware, async(context: AppContext) : Promise<{ message: string}> => {
     const userid = context?.user?._id!;
     const deleted = await removeUser(userid, context);
-
     return context.response.body = deleted;
   })
   .post("/address", authMiddleware, validate(addressValidate), async (context: AppContext) : Promise<{ message: string}> => {
