@@ -1,28 +1,14 @@
 import { MongoClient } from "$mongo/mod.ts";
+import { load } from "$dotenv/mod.ts";
 
 const client = new MongoClient();
+const env = await load();
 
 await client.connect(
-  "mongodb+srv://aldi:12345@testing-indonesia.uassntj.mongodb.net/martchi?authMechanism=SCRAM-SHA-1",
+  env["DATABASE_CONNECTION"],
 );
 
-// await client.connect({
-//   db: "martchi",
-//   servers: [
-//     {
-//       host: "testing-indonesia.uassntj.mongodb.net",
-//       port: 27017,
-//     },
-//   ],
-//   credential: {
-//     username: "aldi",
-//     password: "12345",
-//     db: "martchi",
-//     mechanism: "SCRAM-SHA-1",
-//   },
-// });
-
-export const db = client.database("martchi");
+export const db = client.database(env["DATABASE_NAME"]);
 
 export default client;
 

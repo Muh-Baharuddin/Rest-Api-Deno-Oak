@@ -26,7 +26,6 @@ export const authMiddleware = async (ctx: AppContext, next: Next) => {
     const userPayload = payload as AppContext
     ctx.user = userPayload.user as User;
   } catch(_err) {
-    console.log("INI ERROR", _err)
     ctx.response.body = "Forbidden";
     ctx.throw(403);
   }

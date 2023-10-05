@@ -5,9 +5,11 @@ import { LoginData, LoginResponse } from "./auth.types.ts";
 import { db } from "/database/mongodb.ts";
 import { findByEmail, insert } from "./auth.repository.ts";
 import { key } from "/utils/jwt.ts";
-import { User } from "../users/users.types.ts";
+import { User } from "/users/users.types.ts";
+import { load } from "$dotenv/mod.ts";
 
 const userCollection =  db.collection<User>("users");
+const env = await load();
 
 userCollection.createIndexes({
   indexes: [
@@ -50,14 +52,14 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
 
   const payload = {
     user,
-    exp: getNumericDate(24 * 60 * 60),
+    exp: getNumericDate(parseInt(env["JWT_EXPIRED_TOKEN"])),
   };
 
   const [token, refreshToken] = await Promise.all([
     create({ alg: "HS512", typ: "JWT" }, payload, key),
     create({ alg: "HS512", typ: "JWT" }, {
       ...payload,
-      exp: getNumericDate(30 * 24 * 60 * 60)
+      exp: getNumericDate(parseInt(env["JWT_EXPIRED_REFRESH_TOKEN"]))
     }, key)
   ]);
 

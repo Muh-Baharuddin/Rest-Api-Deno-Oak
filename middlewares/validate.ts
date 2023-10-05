@@ -16,12 +16,10 @@ export const validate = (vobj: z.ZodObject<ZodRawShape> | z.ZodArray<ZodTypeAny>
             message: error.message
           }
         });
-        console.log("ERROR XXXXX", errors)
         const finalObj: Record<string, string> = {};
         for(let i = 0; i < errors.length; i++ ) {
           finalObj[errors[i].field] = errors[i].message
         }
-        console.log("INI ERROR")
         ctx.throw(400, JSON.stringify(finalObj));
       }
     }

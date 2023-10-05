@@ -5,10 +5,11 @@
     "$zod/": "https://deno.land/x/zod@v3.22.2/",
     "$djwt/": "https://deno.land/x/djwt@v2.9.1/",
     "$bcrypt/": "https://deno.land/x/bcrypt@v0.4.1/",
+    "$dotenv/": "https://deno.land/std@0.203.0/dotenv/",
     "/": "./",
     "./": "./"
   },
   "tasks": {
-    "dev": "deno run --watch --allow-net --allow-run index.ts"
+    "dev": "deno run --watch --allow-net --allow-run  --allow-read --allow-env index.ts"
   }
 }
