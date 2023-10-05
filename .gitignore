@@ -1,2 +1,5 @@
 # DotEnv
 .env
+
+# IDE - VSCode
+.vscode/*
