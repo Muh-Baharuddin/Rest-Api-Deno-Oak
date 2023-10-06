@@ -1,7 +1,24 @@
-import { User } from "../users/users.types.ts";
+import { User } from "/users/users.types.ts";
 import { db } from "/database/mongodb.ts";
 
 const userCollection =  db.collection<User>("users");
+
+userCollection.createIndexes({
+  indexes: [
+    {
+      key: {
+        "username": 1,
+      },
+      name: "username"
+    },
+    {
+      key: {
+        "email": 1,
+      },
+      name: "index_email"
+    }
+  ]
+})
 
 export const findByEmail = async(email: string): Promise<User | undefined> => {
   return await userCollection.findOne({
@@ -9,6 +26,12 @@ export const findByEmail = async(email: string): Promise<User | undefined> => {
   });
 }
 
-export const insert = async(userData: User) => {
+export const findByUsername = async(username: string): Promise<User | undefined> => {
+  return await userCollection.findOne({
+    username,
+  });
+}
+
+export const insertUser = async(userData: User) => {
   return await userCollection.insertOne(userData);
 }
