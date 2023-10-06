@@ -7,7 +7,6 @@ import { key } from "/utils/jwt.ts";
 import { User } from "/users/users.types.ts";
 import { config } from "$dotenv/mod.ts";
 
-// const env = await load();
 config({export: true});
 
 export const login = async (userData: LoginData, context: Context): Promise<LoginResponse> => {
@@ -27,22 +26,17 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
     email: findUser?.email,
     username: findUser?.username,
   }
-  const expiredToken = Deno.env.get("JWT_EXPIRED_TOKEN")
-  const expiredRefreshToken = Deno.env.get("JWT_EXPIRED_REFRESH_TOKEN")
-  console.log("expiredToken", expiredToken)
 
   const payload = {
     user,
-    // exp: getNumericDate(parseInt(env["JWT_EXPIRED_TOKEN"])),
-    exp: getNumericDate(parseInt(expiredToken!)),
+    exp: getNumericDate(parseInt(Deno.env.get("JWT_EXPIRED_TOKEN")!)),
   };
 
   const [token, refreshToken] = await Promise.all([
     create({ alg: "HS512", typ: "JWT" }, payload, key),
     create({ alg: "HS512", typ: "JWT" }, {
       ...payload,
-      // exp: getNumericDate(parseInt(env["JWT_EXPIRED_REFRESH_TOKEN"]))
-      exp: getNumericDate(parseInt(expiredRefreshToken!))
+      exp: getNumericDate(parseInt(Deno.env.get("JWT_EXPIRED_REFRESH_TOKEN")!))
     }, key)
   ]);
 
@@ -56,12 +50,12 @@ export const register = async (userData: User, context: Context) => {
   const isEmail = await findByEmail(userData.email);
   const isUsername = await findByUsername(userData.username);
 
-  if(isUsername?.username === userData.username) {
-    context.throw(400, "username already exist");
-  }
-
   if(isEmail?.email === userData.email) {
     context.throw(400, "email already exist");
+  }
+
+  if(isUsername?.username === userData.username) {
+    context.throw(400, "username already exist");
   }
 
   const salt = bcrypt.genSaltSync(8);
