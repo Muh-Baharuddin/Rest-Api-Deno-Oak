@@ -52,7 +52,7 @@ export const userAddress = async (address: Address, _id: string) => {
 }
 
 export const userEditAddress = async (address: Address, userId: string, addressId: string) => {
-  address._id = addressId;
+  address._id = new ObjectId(addressId);
   await userCollection.updateOne(
     { 
       _id: new ObjectId(userId),
