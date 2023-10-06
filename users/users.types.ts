@@ -3,7 +3,7 @@ export interface User {
   email: string;
   username: string;
   addresses?: Address[];
-  password?: string;
+  password: string;
 }
 
 export interface Address {
