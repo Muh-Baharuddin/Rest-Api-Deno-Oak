@@ -5,9 +5,10 @@ import { LoginData, LoginResponse } from "./auth.types.ts";
 import { findByEmail, findByUsername, insertUser } from "./auth.repository.ts";
 import { key } from "/utils/jwt.ts";
 import { User } from "/users/users.types.ts";
-import { load } from "$dotenv/mod.ts";
+import { config } from "$dotenv/mod.ts";
 
-const env = await load();
+// const env = await load();
+config({export: true});
 
 export const login = async (userData: LoginData, context: Context): Promise<LoginResponse> => {
   const findUser = await findByEmail(userData.email);
@@ -26,17 +27,22 @@ export const login = async (userData: LoginData, context: Context): Promise<Logi
     email: findUser?.email,
     username: findUser?.username,
   }
+  const expiredToken = Deno.env.get("JWT_EXPIRED_TOKEN")
+  const expiredRefreshToken = Deno.env.get("JWT_EXPIRED_REFRESH_TOKEN")
+  console.log("expiredToken", expiredToken)
 
   const payload = {
     user,
-    exp: getNumericDate(parseInt(env["JWT_EXPIRED_TOKEN"])),
+    // exp: getNumericDate(parseInt(env["JWT_EXPIRED_TOKEN"])),
+    exp: getNumericDate(parseInt(expiredToken!)),
   };
 
   const [token, refreshToken] = await Promise.all([
     create({ alg: "HS512", typ: "JWT" }, payload, key),
     create({ alg: "HS512", typ: "JWT" }, {
       ...payload,
-      exp: getNumericDate(parseInt(env["JWT_EXPIRED_REFRESH_TOKEN"]))
+      // exp: getNumericDate(parseInt(env["JWT_EXPIRED_REFRESH_TOKEN"]))
+      exp: getNumericDate(parseInt(expiredRefreshToken!))
     }, key)
   ]);
 
