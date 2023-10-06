@@ -1,16 +1,17 @@
 import { MongoClient } from "$mongo/mod.ts";
-// import { load } from "$dotenv/mod.ts";
+import { config } from "$dotenv/mod.ts";
+
+config({export: true});
 
 const client = new MongoClient();
 // const env = await load();
 
 await client.connect(
-  // env["DATABASE_CONNECTION"],
-  "mongodb+srv://aldi:12345@testing-indonesia.uassntj.mongodb.net/martchi?authMechanism=SCRAM-SHA-1",
+  Deno.env.get("DATABASE_CONNECTION")!
 );
 
 // export const db = client.database(env["DATABASE_NAME"]);
-export const db = client.database("martchi");
+export const db = client.database(Deno.env.get("DATABASE_NAME")!);
 
 export default client;
 
