@@ -1,9 +1,9 @@
-import { login } from "/auth/auth.service.ts";
+import { login, register } from "/auth/auth.service.ts";
 import { testing } from "$oak/mod.ts";
 import { assert } from "https://deno.land/std@0.200.0/assert/assert.ts";
 
 Deno.test({
-  name: "Login test",
+  name: "login test",
   async fn() {
     const userData = {
       email: "test3@gmail.com",
@@ -14,6 +14,25 @@ Deno.test({
     });
 
     const { token, refreshToken } = await login(userData, ctx);
+    assert(token);
+    assert(refreshToken);
+  }, 
+  sanitizeOps: false,
+});
+
+Deno.test({
+  name: "register test",
+  async fn() {
+    const userData = {
+      email: "dimas@gmail.com",
+      username: "dimas",
+      password: "123456",
+    };
+    const ctx = testing.createMockContext({
+      path: "/auth/register",
+    });
+
+    const { token, refreshToken } = await register(userData, ctx);
     assert(token);
     assert(refreshToken);
   }, 
