@@ -21,15 +21,17 @@ userCollection.createIndexes({
 })
 
 export const findByEmail = async(email: string): Promise<User | undefined> => {
-  return await userCollection.findOne({
-    email,
-  });
+  return await userCollection.findOne(
+    { email },
+    {projection: {email: 1, username: 1}}
+  );
 }
 
 export const findByUsername = async(username: string): Promise<User | undefined> => {
-  return await userCollection.findOne({
-    username,
-  });
+  return await userCollection.findOne(
+    { username },
+    { projection: {email: 1, username: 1}}
+  );
 }
 
 export const insertUser = async(userData: User) => {
