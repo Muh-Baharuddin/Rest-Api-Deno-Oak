@@ -11,7 +11,7 @@ export const getUserProfile = async (_id: string): Promise<User | undefined> => 
   return await getUserById(_id);
 }
 
-export const updateUser = async (userData: User, _id: string, context: Context) => {
+export const updateUser = async (userData: User, _id: string, context: Context): Promise<{message: string}> => {
   const user = await getUserById(_id)
   
   if (user == undefined) {
@@ -21,7 +21,7 @@ export const updateUser = async (userData: User, _id: string, context: Context) 
   return await userEdit(userData, _id);
 }
 
-export const removeUser = async (_id: string, context: Context) => {
+export const removeUser = async (_id: string, context: Context): Promise<{message: string}> => {
   const user = await getUserById(_id)
   
   if (user == undefined) {
@@ -31,7 +31,7 @@ export const removeUser = async (_id: string, context: Context) => {
   return await deleteUser(_id)
 }
 
-export const addAddress = async (address: Address, _id: string, context: Context) => {
+export const addAddress = async (address: Address, _id: string, context: Context): Promise<{message: string}> => {
   const user = await getUserById(_id)
 
   if (user == undefined) {
@@ -40,7 +40,7 @@ export const addAddress = async (address: Address, _id: string, context: Context
   return await userAddress(address, _id);
 }
 
-export const editAddress = async (address: Address, context: RouterContext<"/address/:id", { id: string; } & Record<string | number, string | undefined>, State>) => {
+export const editAddress = async (address: Address, context: RouterContext<"/address/:id", { id: string; } & Record<string | number, string | undefined>, State>): Promise<{message: string}> => {
   const userId = (context as AppContext).user?._id;
   const addressId = context?.params?.id
   if (userId == undefined) {

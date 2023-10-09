@@ -21,7 +21,7 @@ usersRouter
     const userProfile = await getUserProfile(userid)
     return context.response.body = userProfile;
   })
-  .put("/profile", authMiddleware, validate(userValidate), async(context: AppContext) => {
+  .put("/profile", authMiddleware, validate(userValidate), async(context: AppContext): Promise<{message: string}> => {
     const userid = context?.user?._id!;
     const userData: User = await context.request.body().value;
     const updateData = await updateUser(userData, userid, context);
