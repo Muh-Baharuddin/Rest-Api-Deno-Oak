@@ -16,7 +16,7 @@ Deno.test({
 Deno.test({
   name: "get user profile test",
   async fn() {
-    const userId = "651420a38aeb8cd78e7d0c0d";
+    const userId = "652161ee5092df19d9a1fa9c";
     const userProfile = await getUserProfile(userId);
 
     assert(userProfile);
@@ -27,10 +27,10 @@ Deno.test({
 Deno.test({
   name: "edit user profile test",
   async fn() {
-    const userId = "651420a38aeb8cd78e7d0c0d";
+    const userId = "652161ee5092df19d9a1fa9c";
     const userData = {
-      username: "tri",
-      email: "tri@gmail.com",
+      username: "yunyuu",
+      email: "yunyu@gmail.com",
     } as User;
 
     const ctx = testing.createMockContext({

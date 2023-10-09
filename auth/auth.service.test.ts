@@ -6,7 +6,7 @@ Deno.test({
   name: "login test",
   async fn() {
     const userData = {
-      email: "test3@gmail.com",
+      email: "test7@gmail.com",
       password: "123456",
     };
     const ctx = testing.createMockContext({
