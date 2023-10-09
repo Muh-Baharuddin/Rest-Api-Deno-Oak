@@ -26,7 +26,35 @@ export const getAddressById = async (userId: string, addressId: string): Promise
   return data?.addresses?.[0];
 };
 
-export const deleteUserAddress = async (userId: string, addressId: string) => {
+export const userAddress = async (address: Address, _id: string): Promise<{message: string}> => {
+  const addressId = new ObjectId() as unknown as string;
+  address._id = addressId;
+
+  await userCollection.updateOne(
+    { _id: new ObjectId(_id)} as unknown as User,
+    { $addToSet: {addresses: address}},
+  )
+  return {
+    message: "add new address success"
+  }
+};
+
+export const userEditAddress = async (address: Address, userId: string, addressId: string): Promise<{message: string}> => {
+  address._id = new ObjectId(addressId) as unknown as string;
+  await userCollection.updateOne(
+    { 
+      _id: new ObjectId(userId),
+      'addresses._id': new ObjectId(addressId)
+    } as unknown as User,
+    { $set: {"addresses.$": address} }
+  )
+  return {
+    message: "edit address success"
+  }
+};
+
+
+export const deleteUserAddress = async (userId: string, addressId: string): Promise<{message: string}> => {
   await userCollection.updateOne(
     { _id: new ObjectId(userId),
       "addresses._id": new ObjectId(addressId),
@@ -40,4 +68,4 @@ export const deleteUserAddress = async (userId: string, addressId: string) => {
   return {
     message: "delete address success"
   }
-}
+};

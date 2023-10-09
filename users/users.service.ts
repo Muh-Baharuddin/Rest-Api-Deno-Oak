@@ -1,7 +1,6 @@
-import { Context, RouterContext, State } from "$oak/mod.ts";
-import { Address, User } from "./users.types.ts";
-import { deleteUser, getAllUsers, getUserById, userAddress, userEdit, userEditAddress } from "./users.repository.ts";
-import { AppContext } from "/utils/types.ts";
+import { Context } from "$oak/mod.ts";
+import { User } from "./users.types.ts";
+import { deleteUser, getAllUsers, getUserById, userEdit } from "./users.repository.ts";
 
 export const getAll = async (): Promise<User[]> => {
   return await getAllUsers();
@@ -29,28 +28,4 @@ export const removeUser = async (_id: string, context: Context): Promise<{messag
     context.throw(401)
   }
   return await deleteUser(_id)
-}
-
-export const addAddress = async (address: Address, _id: string, context: Context): Promise<{message: string}> => {
-  const user = await getUserById(_id)
-
-  if (user == undefined) {
-    context.throw(401)
-  }
-  return await userAddress(address, _id);
-}
-
-export const editAddress = async (address: Address, context: RouterContext<"/address/:id", { id: string; } & Record<string | number, string | undefined>, State>): Promise<{message: string}> => {
-  const userId = (context as AppContext).user?._id;
-  const addressId = context?.params?.id
-  if (userId == undefined) {
-    context.throw(401)
-  }
-
-  const user = await getUserById(userId)
-  if (user == undefined) {
-    context.throw(401)
-  }
-
-  return await userEditAddress(address, userId, addressId);
 }
