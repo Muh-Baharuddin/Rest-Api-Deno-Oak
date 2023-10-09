@@ -6,7 +6,7 @@ const userCollection =  db.collection<User>("users");
 
 export const getAllUserAddress = async (_id: string): Promise<Address[]> => {
   const data = await userCollection.findOne(
-    { _id: new ObjectId(_id) },
+    { _id: new ObjectId(_id) } as unknown as User,
     { projection: {
       addresses: 1
     }}

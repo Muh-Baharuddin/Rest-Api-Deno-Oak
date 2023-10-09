@@ -7,7 +7,6 @@ import { deleteUser } from "/users/users.repository.ts";
 Deno.test({
   name: "get all user test",
   async fn() {
-    await getAll();
     const allData = await getAll();
     assert(allData.length > 0);
   }, 
