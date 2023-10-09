@@ -11,7 +11,7 @@ export const getUserProfile = async (_id: string): Promise<User | undefined> => 
   return await getUserById(_id);
 }
 
-export const edit = async (userData: User, _id: string, context: Context) => {
+export const updateUser = async (userData: User, _id: string, context: Context) => {
   const user = await getUserById(_id)
   
   if (user == undefined) {

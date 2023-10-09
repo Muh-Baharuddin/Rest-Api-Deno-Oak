@@ -16,7 +16,7 @@ export const getAllUsers = async (): Promise<User[]> => {
 
 export const getUserById = async (_id: string): Promise<User | undefined> => {
   return await userCollection.findOne(
-    { _id: new ObjectId(_id) },
+    { _id: new ObjectId(_id)} as unknown as User,
     {projection: {
       username: 1,
       email: 1 
@@ -26,24 +26,24 @@ export const getUserById = async (_id: string): Promise<User | undefined> => {
 
 export const userEdit = async (userData: User, _id: string) => {
   return await userCollection.updateOne(
-    { _id: {$eq: new ObjectId(_id)}},
+    { _id: new ObjectId(_id)} as unknown as User,
     { $set: userData }
   )
 }
 
 export const deleteUser = async (_id: string) => {
-  await userCollection.deleteOne({ _id: {$eq: new ObjectId(_id)}})
+  await userCollection.deleteOne({ _id: new ObjectId(_id)} as unknown as User)
   return {
     message: "delete user success"
   }
 }
 
 export const userAddress = async (address: Address, _id: string) => {
-  const addressId = new ObjectId();
+  const addressId = new ObjectId() as unknown as string;
   address._id = addressId;
 
   await userCollection.updateOne(
-    { _id: {$eq: new ObjectId(_id)}},
+    { _id: new ObjectId(_id)} as unknown as User,
     { $addToSet: {addresses: address}},
   )
   return {
@@ -52,7 +52,7 @@ export const userAddress = async (address: Address, _id: string) => {
 }
 
 export const userEditAddress = async (address: Address, userId: string, addressId: string) => {
-  address._id = new ObjectId(addressId);
+  address._id = new ObjectId(addressId) as unknown as string;
   await userCollection.updateOne(
     { 
       _id: new ObjectId(userId),
