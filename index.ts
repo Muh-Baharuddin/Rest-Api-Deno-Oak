@@ -1,6 +1,5 @@
 import { Application, Router } from "$oak/mod.ts";
 import authRouter from "./auth/auth.controller.ts";
-import storesRouter from "./stores/stores.controller.ts";
 import usersRouter from "./users/users.controller.ts";
 
 const app = new Application();
@@ -21,7 +20,6 @@ router
 
 router.use("/auth", authRouter.routes(), authRouter.allowedMethods());
 router.use("/users", usersRouter.routes(), usersRouter.allowedMethods());
-router.use("/stores", storesRouter.routes(), storesRouter.allowedMethods());
 
 app.use(router.routes());
 app.use(router.allowedMethods());

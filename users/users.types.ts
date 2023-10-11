@@ -1,9 +1,12 @@
+import { Store } from "/users/stores/stores.types.ts";
+
 export interface User {
   _id?: string;
   email: string;
   username: string;
-  addresses?: Address[];
   password: string;
+  addresses?: Address[];
+  store?: Store;
 }
 
 export interface Address {

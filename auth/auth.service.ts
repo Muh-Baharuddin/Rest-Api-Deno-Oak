@@ -12,8 +12,6 @@ config({export: true});
 export const login = async (userData: LoginData, context: Context): Promise<TokenResponse> => {
   const findUser = await findByEmail(userData.email);
 
-  console.log("findUser", findUser)
-
   if (findUser == undefined) {
     context.throw(401)
   }
