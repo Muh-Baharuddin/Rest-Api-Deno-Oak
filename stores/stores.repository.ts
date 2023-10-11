@@ -1,4 +1,4 @@
-import { Person, Store } from "./stores.types.ts";
+import { Store } from "./stores.types.ts";
 import { db } from "/database/mongodb.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { User } from "/users/users.types.ts";
@@ -24,7 +24,6 @@ export const getStoreById = async (userId: string): Promise<Store> => {
   const data = await storeCollection.findOne(
     { _id: new ObjectId(userId) } as unknown as User,
   )
-  console.log("data", data)
   return data!;
 }
 
@@ -45,26 +44,11 @@ export const editStore = async (store: Store, storeId: string): Promise<{message
   }
 };
 
-export const deleteUserStore = async (storeId: string): Promise<{message: string}> => {
+export const deleteStore = async (storeId: string): Promise<{message: string}> => {
   await storeCollection.deleteOne(
     { _id: new ObjectId(storeId)} as unknown as Store,
   )
   return {
     message: "delete store success"
-  }
-};
-
-export const storePerson = async (person: Person, idStore: string): Promise<{message: string}> => {
-  const personId = new ObjectId() as unknown as string;
-  person._id = personId;
-
-  const data = await storeCollection.updateOne(
-    { _id: new ObjectId(idStore)} as unknown as Store,
-    { $setOnInsert: {person}},
-    { upsert: true }
-  )
-  console.log("data", data)
-  return {
-    message: "add store person success"
   }
 };
