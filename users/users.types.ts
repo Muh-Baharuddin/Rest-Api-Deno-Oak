@@ -1,4 +1,4 @@
-import { Store } from "/users/stores/stores.types.ts";
+import { Store } from "/stores/stores.types.ts";
 
 export interface User {
   _id?: string;

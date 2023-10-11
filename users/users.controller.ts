@@ -6,12 +6,10 @@ import { AppContext } from "/utils/types.ts";
 import { userValidate } from "/users/users.validation.ts";
 import { User } from "./users.types.ts";
 import usersAddressRouter from "/users/address/address.controller.ts";
-import storesRouter from "/users/stores/stores.controller.ts";
 
 const usersRouter = new Router();
 
 usersRouter.use("/address", usersAddressRouter.routes(), usersAddressRouter.allowedMethods());
-usersRouter.use("/store", storesRouter.routes(), storesRouter.allowedMethods());
 
 usersRouter
   .get("/", authMiddleware ,async (context): Promise<User[]> => {
