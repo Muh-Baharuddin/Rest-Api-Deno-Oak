@@ -1,8 +1,9 @@
 import { assert } from "https://deno.land/std@0.200.0/assert/assert.ts";
-import { getAll, getUserProfile, updateUser } from "/users/users.service.ts";
+import { findByid, getAll, updateUser } from "/users/users.service.ts";
 import { testing } from "$oak/mod.ts";
 import { User } from "/users/users.types.ts";
 import { deleteUser } from "/users/users.repository.ts";
+import { ObjectId } from "$mongo/mod.ts";
 
 Deno.test({
   name: "get all user test",
@@ -16,8 +17,8 @@ Deno.test({
 Deno.test({
   name: "get user profile test",
   async fn() {
-    const userId = "652161ee5092df19d9a1fa9c";
-    const userProfile = await getUserProfile(userId);
+    const userId = new ObjectId("652161ee5092df19d9a1fa9c");
+    const userProfile = await findByid(userId);
 
     assert(userProfile);
   }, 
@@ -27,7 +28,7 @@ Deno.test({
 Deno.test({
   name: "edit user profile test",
   async fn() {
-    const userId = "652161ee5092df19d9a1fa9c";
+    const userId = new ObjectId("652161ee5092df19d9a1fa9c");
     const userData = {
       username: "yunyuu",
       email: "yunyu@gmail.com",
@@ -46,7 +47,7 @@ Deno.test({
 Deno.test({
   name: "delete user profile test",
   async fn() {
-    const userId = "651420a38aeb8cd78e7d0c0d";
+    const userId = new ObjectId("652161ee5092df19d9a1fa9c");
 
     const deleted = await deleteUser(userId);
 

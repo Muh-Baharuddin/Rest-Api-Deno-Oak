@@ -1,11 +1,11 @@
 import { Router } from "$oak/mod.ts";
 import { validate } from "/middlewares/validate.ts";
-import { getAll, getUserProfile, removeUser, updateUser } from "./users.service.ts";
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { AppContext } from "/utils/types.ts";
-import { userValidate } from "/users/users.validation.ts";
 import { User } from "./users.types.ts";
-import usersAddressRouter from "/users/address/address.controller.ts";
+import { findByid, getAll, removeUser, updateUser } from "./users.service.ts";
+import usersAddressRouter from "/address/address.controller.ts";
+import { userValidate } from "/users/dto/user.dto.ts";
 
 const usersRouter = new Router();
 
@@ -18,7 +18,7 @@ usersRouter
   })
   .get("/profile", authMiddleware ,async (context: AppContext): Promise<User | undefined> => {
     const userid = context?.user?._id!;
-    const userProfile = await getUserProfile(userid)
+    const userProfile = await findByid(userid)
     return context.response.body = userProfile;
   })
   .put("/profile", authMiddleware, validate(userValidate), async(context: AppContext): Promise<{message: string}> => {

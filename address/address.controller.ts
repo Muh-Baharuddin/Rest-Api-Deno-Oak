@@ -1,10 +1,10 @@
 import { Router } from "$oak/mod.ts";
-import { Address } from "/users/users.types.ts";
 import { AppContext } from "/utils/types.ts";
+import { Address } from "/address/address.types.ts";
 import { authMiddleware } from "/middlewares/jwt.ts";
-import { addAddress, deleteAddress, editAddress, getAddressId, getAllAddress } from "/users/address/address.service.ts";
+import { addAddress, deleteAddress, editAddress, getAddressId, getAllAddress } from "./address.service.ts";
 import { validate } from "/middlewares/validate.ts";
-import { addressValidate } from "/users/users.validation.ts";
+import { addressValidate } from "./dto/address.dto.ts";
 
 const usersAddressRouter = new Router();
 

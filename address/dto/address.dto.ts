@@ -1,10 +1,5 @@
 import { z } from "$zod/mod.ts";
 
-export const userValidate = z.object({
-  email: z.string().email(),
-  username: z.string().min(3),
-})
-
 export const addressValidate = z.object({
   reciever: z.string().min(3),
   contact: z.string().min(10),
@@ -15,3 +10,5 @@ export const addressValidate = z.object({
   description: z.string().min(3),
   coordinate: z.string().min(3),
 });
+
+export type AddressDto = z.infer<typeof addressValidate>;
