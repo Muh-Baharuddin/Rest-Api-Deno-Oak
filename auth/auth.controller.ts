@@ -2,8 +2,7 @@ import { Router } from "$oak/mod.ts";
 import { TokenResponse } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
 import { validate } from "/middlewares/validate.ts";
-import { UserDto, userValidate } from "/users/dto/user.dto.ts";
-import { loginValidate } from "./dto/auth.dto.ts";
+import { RegisterDto, loginValidate, registerValidate } from "./dto/auth.dto.ts";
 
 const authRouter = new Router();
 
@@ -17,8 +16,8 @@ authRouter
       refreshToken
     };
   })
-  .post("/register", validate(userValidate), async (context): Promise<TokenResponse> => {
-    const userData: UserDto = await context.request.body().value;
+  .post("/register", validate(registerValidate), async (context): Promise<TokenResponse> => {
+    const userData: RegisterDto = await context.request.body().value;
 
     const newData = await register(userData, context);
     return context.response.body = newData;
