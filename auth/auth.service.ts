@@ -1,15 +1,17 @@
 import { create, getNumericDate } from "$djwt/mod.ts";
 import { Context } from "$oak/mod.ts";
 import * as bcrypt from "$bcrypt/mod.ts";
-import { LoginData, TokenResponse } from "./auth.types.ts";
-import { findByEmail, findByUsername, insertUser } from "./auth.repository.ts";
+import { LoginPayload, TokenResponse } from "./auth.types.ts";
 import { key } from "/utils/jwt.ts";
-import { User } from "/users/users.types.ts";
 import { config } from "$dotenv/mod.ts";
+import { findByEmail, findByUsername, insertUser } from "/users/users.service.ts";
+import { LoginDto, RegisterDto } from "./dto/auth.dto.ts";
+import { User } from "/users/users.types.ts";
+import { ObjectId } from "$mongo/mod.ts";
 
 config({export: true});
 
-export const login = async (userData: LoginData, context: Context): Promise<TokenResponse> => {
+export const login = async (userData: LoginDto, context: Context): Promise<TokenResponse> => {
   const findUser = await findByEmail(userData.email);
 
   if (findUser == undefined) {
@@ -46,7 +48,7 @@ export const login = async (userData: LoginData, context: Context): Promise<Toke
   };
 }
 
-export const register = async (userData: User, context: Context) => {
+export const register = async (userData: RegisterDto, context: Context) => {
   const isEmail = await findByEmail(userData.email);
   const isUsername = await findByUsername(userData.username);
   if(isEmail?.email === userData.email) {
@@ -60,14 +62,15 @@ export const register = async (userData: User, context: Context) => {
   const salt = bcrypt.genSaltSync(8);
   userData.password = bcrypt.hashSync(userData.password!, salt);
 
-  const inputUser = await insertUser(userData);
+  const newData = userByDto(userData);
+  await insertUser(newData);
   const user = {
-    _id: inputUser,
-    email: userData?.email,
-    username: userData?.username,
-  }
+    _id: newData._id,
+    email: newData?.email,
+    username: newData?.username,
+  } as User;
 
-  const payload = {
+  const payload: LoginPayload = {
     user,
     exp: getNumericDate(parseInt(Deno.env.get("JWT_EXPIRED_TOKEN")!)),
   };
@@ -84,4 +87,14 @@ export const register = async (userData: User, context: Context) => {
     token,
     refreshToken
   };
+}
+
+const userByDto = (userDto : RegisterDto): User => {
+  const data: User = {
+    _id: new ObjectId(),
+    email: userDto.email,
+    username: userDto.username,
+    password: userDto.password
+  }
+  return data
 }
