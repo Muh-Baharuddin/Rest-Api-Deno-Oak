@@ -2,7 +2,7 @@ import { Router } from "$oak/mod.ts";
 import { validate } from "/middlewares/validate.ts";
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { Store } from "./stores.types.ts";
-import { storeValidate } from "./stores.validation.ts";
+import { storeValidate } from "./dto/store.dto.ts";
 import { addStore, findAllStore, findStoreById, removeStore, updateStore } from "./stores.service.ts";
 
 const storesRouter = new Router();

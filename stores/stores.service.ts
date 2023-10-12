@@ -15,7 +15,7 @@ export const findStoreById = async (storeId: string, context: AppContext): Promi
   return isStore;
 }
 
-export const addStore = async (store: Store): Promise<{ message: string}> => {
+export const addStore = async (store: Store): Promise<{ message: string }> => {
   return await createNewStore(store)
 }
 
@@ -36,3 +36,13 @@ export const removeStore = async (storeId: string, context: AppContext): Promise
   }
   return await deleteStore(storeId)
 }
+
+// const storeByDto = (storeDto : StoreDto): Store => {
+//   const data: Store = {
+//     _id: new ObjectId(),
+//     name: storeDto.name,
+//     address: storeDto.address,
+//     description: storeDto.description,
+//   }
+//   return data
+// }

@@ -1,22 +1,12 @@
-import { Store } from "/stores/stores.types.ts";
+import { Person } from "/person/person.types.ts";
+import { Address } from "/address/address.types.ts";
+import { ObjectId } from "$mongo/mod.ts";
 
 export interface User {
-  _id?: string;
+  _id: ObjectId;
   email: string;
   username: string;
   password: string;
   addresses?: Address[];
-  store?: Store;
-}
-
-export interface Address {
-  _id: string;
-  reciever: string;
-  contact : string;
-  streetName: string;
-  subdistrict: string;
-  city: string;
-  postalCode: string;
-  description: string;
-  coordinate: string;
+  person?: Person;
 }
