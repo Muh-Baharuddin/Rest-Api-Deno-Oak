@@ -1,5 +1,5 @@
 import { z } from "$zod/mod.ts";
-import { addressValidate } from "/address/dto/address.dto.ts";
+import { addressValidate } from "../address/dto/address.dto.ts";
 
 export const userValidate = z.object({
   email: z.string().email(),

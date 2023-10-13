@@ -4,8 +4,8 @@ import { authMiddleware } from "/middlewares/jwt.ts";
 import { AppContext } from "/utils/types.ts";
 import { User } from "./users.types.ts";
 import { findByid, getAll, removeUser, updateUser } from "./users.service.ts";
-import usersAddressRouter from "/address/address.controller.ts";
 import { userValidate } from "/users/dto/user.dto.ts";
+import usersAddressRouter from "./address/address.controller.ts";
 
 const usersRouter = new Router();
 

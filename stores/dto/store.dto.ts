@@ -1,6 +1,6 @@
 import { z } from "$zod/mod.ts";
 import { personValidate } from "/person/dto/person.dto.ts";
-import { addressValidate } from "/address/dto/address.dto.ts";
+import { addressValidate } from "/users/address/dto/address.dto.ts";
 
 export const storeValidate = z.object({
   name: z.string().min(3),
