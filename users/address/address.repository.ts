@@ -5,7 +5,7 @@ import { Address } from "./address.types.ts";
 
 const userCollection =  db.collection<User>("users");
 
-export const getAllUserAddress = async (_id: ObjectId): Promise<Address[]> => {
+export const getAllAddress = async (_id: ObjectId): Promise<Address[]> => {
   const data = await userCollection.findOne(
     { _id },
     { projection: {
@@ -15,10 +15,10 @@ export const getAllUserAddress = async (_id: ObjectId): Promise<Address[]> => {
   return data?.addresses!;
 };
 
-export const getAddressById = async (userId: ObjectId, addressId: string): Promise<Address | undefined> => {
+export const getAddressById = async (_id: ObjectId, addressId: string): Promise<Address | undefined> => {
   const data = await userCollection.findOne(
     { 
-      _id: userId,
+      _id,
       "addresses._id": new ObjectId(addressId),
     } as unknown as User,
     { projection: {"addresses.$": 1}}
@@ -27,7 +27,7 @@ export const getAddressById = async (userId: ObjectId, addressId: string): Promi
   return data?.addresses?.[0];
 };
 
-export const userAddress = async (address: Address, _id: ObjectId): Promise<{message: string}> => {
+export const addNewAddress = async (address: Address, _id: ObjectId): Promise<{message: string}> => {
   const addressId = new ObjectId();
   address._id = addressId;
 
@@ -40,11 +40,11 @@ export const userAddress = async (address: Address, _id: ObjectId): Promise<{mes
   }
 };
 
-export const userEditAddress = async (address: Address, userId: ObjectId, addressId: string): Promise<{message: string}> => {
+export const editAddress = async (address: Address, _id: ObjectId, addressId: string): Promise<{message: string}> => {
   address._id = new ObjectId(addressId);
   await userCollection.updateOne(
     { 
-      _id: userId,
+      _id,
       'addresses._id': new ObjectId(addressId)
     } as unknown as User,
     { $set: {"addresses.$": address} }
@@ -55,9 +55,9 @@ export const userEditAddress = async (address: Address, userId: ObjectId, addres
 };
 
 
-export const deleteUserAddress = async (userId: ObjectId, addressId: string): Promise<{message: string}> => {
-  await userCollection.updateOne(
-    { _id: userId,
+export const deleteAddress = async (_id: ObjectId, addressId: string): Promise<{message: string}> => {
+  const data = await userCollection.updateOne(
+    { _id,
       "addresses._id": new ObjectId(addressId),
     } as unknown as User,
     {$pull: {
@@ -66,6 +66,7 @@ export const deleteUserAddress = async (userId: ObjectId, addressId: string): Pr
       }
     }}
   )
+  console.log("data", data)
   return {
     message: "delete address success"
   }
