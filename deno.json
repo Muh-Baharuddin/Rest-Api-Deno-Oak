@@ -6,6 +6,7 @@
     "$djwt/": "https://deno.land/x/djwt@v2.9.1/",
     "$bcrypt/": "https://deno.land/x/bcrypt@v0.4.1/",
     "$dotenv/": "https://deno.land/x/dotenv@v3.2.2/",
+    "$denomailer/": "https://deno.land/x/denomailer@1.6.0/",
     "/": "./",
     "./": "./"
   },
