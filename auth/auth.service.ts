@@ -8,6 +8,7 @@ import { findByEmail, findByUsername, insertUser } from "/users/users.service.ts
 import { LoginDto, RegisterDto } from "./dto/auth.dto.ts";
 import { User } from "/users/users.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
+import { client } from "/denomailer.config.ts";
 
 config({export: true});
 
@@ -63,6 +64,20 @@ export const register = async (userData: RegisterDto, context: Context) => {
   userData.password = bcrypt.hashSync(userData.password!, salt);
 
   const newData = userByDto(userData);
+  try {
+    await client.send({
+      from: Deno.env.get("MAILER_USERNAME")!,
+      to: newData.email,
+      subject: "Confirmation email",
+      content: "auto",
+      html: `<p>Hi ${newData.username} Terima kasih telah mendaftar.</p>`,
+    });
+    
+    await client.close();
+  } catch (error) {
+    console.log("error", error)
+  }
+
   await insertUser(newData);
   const user = {
     _id: newData._id,
