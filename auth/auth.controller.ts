@@ -3,8 +3,11 @@ import { TokenResponse } from "./auth.types.ts";
 import { login, register } from "./auth.service.ts";
 import { validate } from "/middlewares/validate.ts";
 import { RegisterDto, loginValidate, registerValidate } from "./dto/auth.dto.ts";
+import verificationRouter from "/auth/verification/verification.controller.ts";
 
 const authRouter = new Router();
+
+authRouter.use("/verification", verificationRouter.routes(), verificationRouter.allowedMethods());
 
 authRouter
   .post("/login", validate(loginValidate), async (context): Promise<TokenResponse> => {
