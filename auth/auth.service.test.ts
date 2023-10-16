@@ -27,6 +27,7 @@ Deno.test({
       email: "dimas@gmail.com",
       username: "dimas",
       password: "123456",
+      verificationCode: "542951"
     };
     const ctx = testing.createMockContext({
       path: "/auth/register",
