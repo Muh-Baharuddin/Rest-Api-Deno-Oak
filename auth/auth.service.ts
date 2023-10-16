@@ -3,14 +3,11 @@ import { Context } from "$oak/mod.ts";
 import * as bcrypt from "$bcrypt/mod.ts";
 import { LoginPayload, TokenResponse } from "./auth.types.ts";
 import { key } from "/utils/jwt.ts";
-import { config } from "$dotenv/mod.ts";
 import { findByEmail, findByUsername, insertUser } from "/users/users.service.ts";
 import { LoginDto, RegisterDto } from "./dto/auth.dto.ts";
 import { User } from "/users/users.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
-import { client } from "/denomailer.config.ts";
-
-config({export: true});
+import { findVerifCode } from "/auth/verification/verification.service.ts";
 
 export const login = async (userData: LoginDto, context: Context): Promise<TokenResponse> => {
   const findUser = await findByEmail(userData.email);
@@ -49,34 +46,23 @@ export const login = async (userData: LoginDto, context: Context): Promise<Token
   };
 }
 
-export const register = async (userData: RegisterDto, context: Context) => {
-  const isEmail = await findByEmail(userData.email);
-  const isUsername = await findByUsername(userData.username);
-  if(isEmail?.email === userData.email) {
+export const register = async (registerDto: RegisterDto, context: Context) => {
+  const isEmail = await findByEmail(registerDto.email);
+  const isUsername = await findByUsername(registerDto.username);
+  if(isEmail?.email === registerDto.email) {
     context.throw(400, "email already exist");
   }
 
-  if(isUsername?.username === userData.username) {
+  if(isUsername?.username === registerDto.username) {
     context.throw(400, "username already exist");
   }
 
   const salt = bcrypt.genSaltSync(8);
-  userData.password = bcrypt.hashSync(userData.password!, salt);
+  registerDto.password = bcrypt.hashSync(registerDto.password!, salt);
 
-  const newData = userByDto(userData);
-  try {
-    await client.send({
-      from: Deno.env.get("MAILER_USERNAME")!,
-      to: newData.email,
-      subject: "Confirmation email",
-      content: "auto",
-      html: `<p>Hi ${newData.username} Terima kasih telah mendaftar.</p>`,
-    });
-    
-    await client.close();
-  } catch (error) {
-    console.log("error", error)
-  }
+  await findVerifCode(registerDto.email, registerDto.verificationCode, context)
+
+  const newData = userByDto(registerDto);
 
   await insertUser(newData);
   const user = {
@@ -109,7 +95,7 @@ const userByDto = (userDto : RegisterDto): User => {
     _id: new ObjectId(),
     email: userDto.email,
     username: userDto.username,
-    password: userDto.password
+    password: userDto.password,
   }
   return data
 }
