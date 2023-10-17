@@ -33,6 +33,28 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
   }
 }
 
+export const updateItem = async (itemData: Item, _id: string, context: Context): Promise<{message: string}> => {
+  const itemId = new ObjectId(_id)
+  const item = await itemRepository.getItemById(itemId)
+  
+  if (item == undefined) {
+    context.throw(401)
+  }
+
+  itemData.updated_at = new Date();
+  return itemRepository.itemEdit(itemData, itemId);
+}
+
+export const removeItem = async (_id: string, context: Context): Promise<{message: string}> => {
+  const itemId = new ObjectId(_id)
+  const item = await itemRepository.getItemById(itemId)
+  
+  if (item == undefined) {
+    context.throw(401)
+  }
+  return await itemRepository.deleteItem(itemId)
+}
+
 const itemByDto = (itemDto : ItemDto, user: PartialUser): Item => {
   const data: Item = {
     _id: new ObjectId(),

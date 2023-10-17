@@ -34,3 +34,20 @@ export const getItemById = async (_id: ObjectId): Promise<Item | undefined> => {
 export const insertItem = async(item: Item) => {
   return await itemCollection.insertOne(item);
 }
+
+export const itemEdit = async (item: Item, _id: ObjectId): Promise<{message: string}> => {
+  await itemCollection.updateOne(
+    { _id },
+    { $set: item }
+  )
+  return {
+    message: "edit item success"
+  }
+}
+
+export const deleteItem = async (_id: ObjectId): Promise<{message: string}> => {
+  await itemCollection.deleteOne({ _id })
+  return {
+    message: "delete item success"
+  }
+}
