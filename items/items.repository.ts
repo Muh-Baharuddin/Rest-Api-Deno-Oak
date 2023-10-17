@@ -44,3 +44,10 @@ export const itemEdit = async (item: Item, _id: ObjectId): Promise<{message: str
     message: "edit item success"
   }
 }
+
+export const deleteItem = async (_id: ObjectId): Promise<{message: string}> => {
+  await itemCollection.deleteOne({ _id })
+  return {
+    message: "delete item success"
+  }
+}

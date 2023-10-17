@@ -1,7 +1,7 @@
 import { Router } from "$oak/mod.ts";
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { Item } from "/items/items.types.ts";
-import { getAllItems, getItemById, insertItem, updateItem } from "/items/items.service.ts";
+import { getAllItems, getItemById, insertItem, removeItem, updateItem } from "/items/items.service.ts";
 import { validate } from "/middlewares/validate.ts";
 import { ItemDto, itemValidate } from "/items/dto/item.dto.ts";
 import { AppContext } from "/utils/types.ts";
@@ -31,5 +31,10 @@ itemsRouter
     const updateData = await updateItem(itemData, itemId, context);
     return context.response.body = updateData;
   })
+  .delete("/:id", authMiddleware, async(context) : Promise<{ message: string}> => {
+    const itemId = context?.params?.id;
+    const deleted = await removeItem(itemId, context);
+    return context.response.body = deleted;
+  });
 
 export default itemsRouter;
