@@ -16,7 +16,7 @@ export const findByEmail = async (email: string): Promise<User | undefined> => {
 }
 
 export const findByUsername = async (username: string): Promise<User | undefined> => {
-  return await userRepository.findByEmail(username);
+  return await userRepository.findByUsername(username);
 }
 
 export const insertUser = async (user: User) => {
@@ -30,6 +30,7 @@ export const updateUser = async (userData: User, _id: ObjectId, context: Context
     context.throw(401)
   }
 
+  userData.updated_at = new Date();
   return userRepository.userEdit(userData, _id);
 }
 
@@ -37,7 +38,6 @@ export const removeUser = async (_id: ObjectId, context: Context): Promise<{mess
   const user = await userRepository.findById(_id)
   
   if (user == undefined) {
-    context.response.body = "Unauthorized";
     context.throw(401)
   }
   return await userRepository.deleteUser(_id)

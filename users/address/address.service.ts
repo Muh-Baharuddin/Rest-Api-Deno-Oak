@@ -9,6 +9,8 @@ import { RouterContext, State } from "$oak/mod.ts";
 export const createAddressByDto = (addDto : AddressDto) => {
   const address: Address = {
     _id: new ObjectId(),
+    created_at: new Date(),
+    updated_at: new Date(),
     ...addDto,
   } ;
 
@@ -57,7 +59,7 @@ export const editAddress = async (address: Address, context: RouterContext<"/:id
   if (user == undefined) {
     context.throw(401)
   }
-
+  address.updated_at = new Date();
   return await addressRepository.editAddress(address, userId, addressId);
 }
 

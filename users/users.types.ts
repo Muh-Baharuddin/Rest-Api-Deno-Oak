@@ -9,4 +9,6 @@ export interface User {
   password: string;
   addresses?: Address[];
   person?: Person;
+  created_at: Date;
+  updated_at: Date;
 }

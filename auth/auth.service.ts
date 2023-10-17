@@ -96,6 +96,8 @@ const userByDto = (userDto : RegisterDto): User => {
     email: userDto.email,
     username: userDto.username,
     password: userDto.password,
+    created_at: new Date(),
+    updated_at: new Date(),
   }
   return data
 }
