@@ -1,5 +1,5 @@
 import { ObjectId } from "$mongo/mod.ts";
-import { Person } from "/person/person.types.ts";
+import { Person } from "../users/person/person.types.ts";
 import { Address } from "/users/address/address.types.ts";
 
 export interface Store {

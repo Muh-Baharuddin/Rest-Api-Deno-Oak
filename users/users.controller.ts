@@ -6,10 +6,12 @@ import { User } from "./users.types.ts";
 import { findByid, getAll, removeUser, updateUser } from "./users.service.ts";
 import { userValidate } from "/users/dto/user.dto.ts";
 import usersAddressRouter from "./address/address.controller.ts";
+import personRouter from "/users/person/person.controller.ts";
 
 const usersRouter = new Router();
 
 usersRouter.use("/address", usersAddressRouter.routes(), usersAddressRouter.allowedMethods());
+usersRouter.use("/person", personRouter.routes(), personRouter.allowedMethods());
 
 usersRouter
   .get("/", authMiddleware ,async (context): Promise<User[]> => {

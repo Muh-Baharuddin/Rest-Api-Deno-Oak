@@ -1,5 +1,5 @@
 import { z } from "$zod/mod.ts";
-import { personValidate } from "/person/dto/person.dto.ts";
+import { personValidate } from "../../users/person/dto/person.dto.ts";
 import { addressValidate } from "/users/address/dto/address.dto.ts";
 
 export const storeValidate = z.object({
