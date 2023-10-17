@@ -10,4 +10,6 @@ export interface Address {
   postalCode: string;
   description: string;
   coordinate: string;
+  created_at: Date;
+  updated_at: Date;
 }
