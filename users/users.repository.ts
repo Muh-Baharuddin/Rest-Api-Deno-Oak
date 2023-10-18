@@ -58,7 +58,7 @@ export const findUserByUsername = async(username: string): Promise<User | undefi
 export const findUserDataById = async(_id: ObjectId): Promise<User | undefined> => {
   return await userCollection.findOne(
     { _id },
-    { projection: {email: 1, username: 1, person: 1}}
+    { projection: {password: 0}}
   );
 }
 

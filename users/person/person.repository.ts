@@ -24,3 +24,23 @@ export const addNewPerson = async (person: Person, _id: ObjectId): Promise<{mess
     message: "add person success"
   }
 };
+
+export const editPerson = async (person: Person, _id: ObjectId): Promise<{message: string}> => {
+  await userCollection.updateOne(
+      { _id },
+      { $set: { person }},
+    )
+  return {
+    message: "edit person success"
+  }
+};
+
+export const deletePerson = async (_id: ObjectId): Promise<{message: string}> => {
+  await userCollection.updateOne(
+    { _id },
+    { $unset: { "person": 1} as unknown as User}
+  )
+  return {
+    message: "delete person success"
+  }
+};

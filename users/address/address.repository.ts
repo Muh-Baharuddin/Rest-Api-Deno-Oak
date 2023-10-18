@@ -56,7 +56,7 @@ export const editAddress = async (address: Address, _id: ObjectId, addressId: st
 
 
 export const deleteAddress = async (_id: ObjectId, addressId: string): Promise<{message: string}> => {
-  const data = await userCollection.updateOne(
+  await userCollection.updateOne(
     { _id,
       "addresses._id": new ObjectId(addressId),
     } as unknown as User,
@@ -66,7 +66,6 @@ export const deleteAddress = async (_id: ObjectId, addressId: string): Promise<{
       }
     }}
   )
-  console.log("data", data)
   return {
     message: "delete address success"
   }

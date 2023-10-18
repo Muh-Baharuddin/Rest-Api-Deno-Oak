@@ -3,11 +3,11 @@ import { User } from "./users.types.ts";
 import * as userRepository from "./users.repository.ts";
 import { ObjectId } from "$mongo/mod.ts";
 
-export const getAll = async (): Promise<User[]> => {
+export const getAllUser = async (): Promise<User[]> => {
   return await userRepository.getAllUsers();
 }
 
-export const findByid = async (id: ObjectId): Promise<User | undefined> => {
+export const findUserByid = async (id: ObjectId): Promise<User | undefined> => {
   return await userRepository.findUserById(id);
 }
 
@@ -15,11 +15,11 @@ export const findUserDataByid = async (id: ObjectId): Promise<User | undefined> 
   return await userRepository.findUserDataById(id);
 }
 
-export const findByEmail = async (email: string): Promise<User | undefined> => {
+export const findUserByEmail = async (email: string): Promise<User | undefined> => {
   return await userRepository.findUserByEmail(email);
 }
 
-export const findByUsername = async (username: string): Promise<User | undefined> => {
+export const findUserByUsername = async (username: string): Promise<User | undefined> => {
   return await userRepository.findUserByUsername(username);
 }
 

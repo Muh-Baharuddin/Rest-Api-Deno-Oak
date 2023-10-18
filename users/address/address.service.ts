@@ -3,7 +3,7 @@ import { Address } from "./address.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { AddressDto } from "./dto/address.dto.ts";
 import { AppContext } from "/utils/types.ts";
-import { findByid } from "/users/users.service.ts";
+import { findUserByid } from "/users/users.service.ts";
 import { RouterContext, State } from "$oak/mod.ts";
 
 export const createAddressByDto = (addDto : AddressDto) => {
@@ -18,7 +18,7 @@ export const createAddressByDto = (addDto : AddressDto) => {
 }
 
 export const getAllAddress = async (_id: ObjectId, context: AppContext): Promise<Address[]> => {
-  const user = await findByid(_id)
+  const user = await findUserByid(_id)
   
   if (user == undefined) {
     context.throw(401)
@@ -27,7 +27,7 @@ export const getAllAddress = async (_id: ObjectId, context: AppContext): Promise
 }
 
 export const getAddressId = async (_id: ObjectId, addressId: string, context: AppContext): Promise<Address> => {
-  const user = await findByid(_id);
+  const user = await findUserByid(_id);
   if (user === undefined) {
     context.throw(401);
   }
@@ -39,7 +39,7 @@ export const getAddressId = async (_id: ObjectId, addressId: string, context: Ap
 }
 
 export const addAddress = async (address: AddressDto, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
-  const user = await findByid(_id)
+  const user = await findUserByid(_id)
 
   if (user == undefined) {
     context.throw(401)
@@ -55,7 +55,7 @@ export const editAddress = async (address: Address, context: RouterContext<"/:id
     context.throw(401)
   }
 
-  const user = await findByid(userId)
+  const user = await findUserByid(userId)
   if (user == undefined) {
     context.throw(401)
   }
@@ -64,7 +64,7 @@ export const editAddress = async (address: Address, context: RouterContext<"/:id
 }
 
 export const deleteAddress = async (_id: ObjectId, addressId: string, context: AppContext): Promise<{message: string}> => {
-  const user = await findByid(_id);
+  const user = await findUserByid(_id);
 
   if (user == undefined) {
     context.throw(401);

@@ -3,7 +3,7 @@ import * as itemRepository from "./items.repository.ts";
 import { ItemDto } from "/items/dto/item.dto.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { Context } from "$oak/mod.ts";
-import { findByid, findUserDataByid } from "/users/users.service.ts";
+import { findUserByid, findUserDataByid } from "/users/users.service.ts";
 import { AppContext } from "/utils/types.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
@@ -37,7 +37,7 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
 export const updateItem = async (itemData: Item, _id: string, context: AppContext): Promise<{message: string}> => {
   const itemId = new ObjectId(_id)
   const userId = context.user?._id!;
-  const user = await findByid(userId)
+  const user = await findUserByid(userId)
 
   if (user == undefined) {
     context.throw(401)
