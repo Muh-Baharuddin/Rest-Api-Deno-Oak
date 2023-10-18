@@ -29,7 +29,8 @@ usersAddressRouter
   })
   .put("/:id", authMiddleware, validate(addressValidate), async (context) : Promise<{ message: string}> => {
     const address: Address = await context.request.body().value;
-    const editedAddress = await editAddress(address, context);
+    const addressId = context?.params?.id
+    const editedAddress = await editAddress(address, addressId, context);
     return context.response.body = editedAddress;
   })
   .delete("/:id", authMiddleware, async(context) : Promise<{ message: string}> => {
