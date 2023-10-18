@@ -8,15 +8,19 @@ export const getAll = async (): Promise<User[]> => {
 }
 
 export const findByid = async (id: ObjectId): Promise<User | undefined> => {
-  return await userRepository.findById(id);
+  return await userRepository.findUserById(id);
+}
+
+export const findUserDataByid = async (id: ObjectId): Promise<User | undefined> => {
+  return await userRepository.findUserDataById(id);
 }
 
 export const findByEmail = async (email: string): Promise<User | undefined> => {
-  return await userRepository.findByEmail(email);
+  return await userRepository.findUserByEmail(email);
 }
 
 export const findByUsername = async (username: string): Promise<User | undefined> => {
-  return await userRepository.findByUsername(username);
+  return await userRepository.findUserByUsername(username);
 }
 
 export const insertUser = async (user: User) => {
@@ -24,7 +28,7 @@ export const insertUser = async (user: User) => {
 }
 
 export const updateUser = async (userData: User, _id: ObjectId, context: Context): Promise<{message: string}> => {
-  const user = await userRepository.findById(_id)
+  const user = await userRepository.findUserById(_id)
   
   if (user == undefined) {
     context.throw(401)
@@ -35,7 +39,7 @@ export const updateUser = async (userData: User, _id: ObjectId, context: Context
 }
 
 export const removeUser = async (_id: ObjectId, context: Context): Promise<{message: string}> => {
-  const user = await userRepository.findById(_id)
+  const user = await userRepository.findUserById(_id)
   
   if (user == undefined) {
     context.throw(401)
