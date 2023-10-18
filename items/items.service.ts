@@ -3,8 +3,9 @@ import * as itemRepository from "./items.repository.ts";
 import { ItemDto } from "/items/dto/item.dto.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { Context } from "$oak/mod.ts";
-import { findUserByid, findUserDataByid } from "/users/users.service.ts";
+import { findUserDataByid } from "/users/users.service.ts";
 import { AppContext } from "/utils/types.ts";
+import { getCategoryByName } from "/categories/categories.service.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
   return await itemRepository.getAllItems();
@@ -26,7 +27,8 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
   if (user == undefined) {
     context.throw(401);
   }
-
+  const category = await getCategoryByName(itemDto.category.name, context)
+  console.log("category", category)
   const itemData = itemByDto(itemDto, user);
   await itemRepository.insertItem(itemData);
   return {
@@ -37,7 +39,7 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
 export const updateItem = async (itemData: Item, _id: string, context: AppContext): Promise<{message: string}> => {
   const itemId = new ObjectId(_id)
   const userId = context.user?._id!;
-  const user = await findUserByid(userId)
+  const user = await findUserDataByid(userId)
 
   if (user == undefined) {
     context.throw(401)
@@ -67,12 +69,7 @@ const itemByDto = (itemDto : ItemDto, user: PartialUser): Item => {
     _id: new ObjectId(),
     name: itemDto.name,
     price: itemDto.price,
-    category: itemDto.category.map((categoryDto: {name: string}) => {
-      return {
-        _id: new ObjectId(),
-        name: categoryDto.name,
-      };
-    }),
+    category: itemDto.category.name,
     user,
     created_at: new Date(),
     updated_at: new Date(),
