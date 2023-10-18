@@ -1,10 +1,6 @@
 import { z } from "$zod/mod.ts";
+import { categoryValidate } from "/categories/dto/category.dto.ts";
 
-export const categoryValidate = z.array(
-  z.object({
-    name: z.string().min(2)
-  })
-)
 export const itemValidate = z.object({
   name: z.string().min(2),
   price: z.number().positive(),
@@ -12,4 +8,3 @@ export const itemValidate = z.object({
 })
 
 export type ItemDto = z.infer<typeof itemValidate>;
-export type categoryDto = z.infer<typeof categoryValidate>;
