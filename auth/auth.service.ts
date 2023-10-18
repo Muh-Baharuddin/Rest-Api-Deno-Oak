@@ -3,14 +3,14 @@ import { Context } from "$oak/mod.ts";
 import * as bcrypt from "$bcrypt/mod.ts";
 import { LoginPayload, TokenResponse } from "./auth.types.ts";
 import { key } from "/utils/jwt.ts";
-import { findByEmail, findByUsername, insertUser } from "/users/users.service.ts";
+import { findUserByEmail, findUserByUsername, insertUser } from "/users/users.service.ts";
 import { LoginDto, RegisterDto } from "./dto/auth.dto.ts";
 import { User } from "/users/users.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { findVerifCode } from "/auth/verification/verification.service.ts";
 
 export const login = async (userData: LoginDto, context: Context): Promise<TokenResponse> => {
-  const findUser = await findByEmail(userData.email);
+  const findUser = await findUserByEmail(userData.email);
 
   if (findUser == undefined) {
     context.throw(401)
@@ -47,8 +47,8 @@ export const login = async (userData: LoginDto, context: Context): Promise<Token
 }
 
 export const register = async (registerDto: RegisterDto, context: Context) => {
-  const isEmail = await findByEmail(registerDto.email);
-  const isUsername = await findByUsername(registerDto.username);
+  const isEmail = await findUserByEmail(registerDto.email);
+  const isUsername = await findUserByUsername(registerDto.username);
   if(isEmail?.email === registerDto.email) {
     context.throw(400, "email already exist");
   }
