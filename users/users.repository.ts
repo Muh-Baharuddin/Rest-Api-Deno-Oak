@@ -31,7 +31,7 @@ export const getAllUsers = async (): Promise<User[]> => {
   ).toArray();
 }
 
-export const findById = async (_id: ObjectId): Promise<User | undefined> => {
+export const findUserById = async (_id: ObjectId): Promise<User | undefined> => {
   return await userCollection.findOne(
     { _id },
     {projection: {
@@ -41,17 +41,24 @@ export const findById = async (_id: ObjectId): Promise<User | undefined> => {
   );
 }
 
-export const findByEmail = async(email: string): Promise<User | undefined> => {
+export const findUserByEmail = async(email: string): Promise<User | undefined> => {
   return await userCollection.findOne(
     { email },
     {projection: {email: 1, username: 1, password: 1}}
   );
 }
 
-export const findByUsername = async(username: string): Promise<User | undefined> => {
+export const findUserByUsername = async(username: string): Promise<User | undefined> => {
   return await userCollection.findOne(
     { username },
     { projection: {email: 1, username: 1}}
+  );
+}
+
+export const findUserDataById = async(_id: ObjectId): Promise<User | undefined> => {
+  return await userCollection.findOne(
+    { _id },
+    { projection: {email: 1, username: 1, person: 1}}
   );
 }
 
