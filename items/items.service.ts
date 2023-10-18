@@ -3,7 +3,8 @@ import * as itemRepository from "./items.repository.ts";
 import { ItemDto } from "/items/dto/item.dto.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { Context } from "$oak/mod.ts";
-import { findByid } from "/users/users.service.ts";
+import { findByid, findUserDataByid } from "/users/users.service.ts";
+import { AppContext } from "/utils/types.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
   return await itemRepository.getAllItems();
@@ -20,7 +21,7 @@ export const getItemById = async (_id: string, context: Context): Promise<Item> 
 }
 
 export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
-  const user = await findByid(userId)
+  const user = await findUserDataByid(userId)
 
   if (user == undefined) {
     context.throw(401);
@@ -33,14 +34,20 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
   }
 }
 
-export const updateItem = async (itemData: Item, _id: string, context: Context): Promise<{message: string}> => {
+export const updateItem = async (itemData: Item, _id: string, context: AppContext): Promise<{message: string}> => {
   const itemId = new ObjectId(_id)
+  const userId = context.user?._id!;
+  const user = await findByid(userId)
+
+  if (user == undefined) {
+    context.throw(401)
+  }
   const item = await itemRepository.getItemById(itemId)
   
   if (item == undefined) {
     context.throw(401)
   }
-
+  itemData.updated_by = user.person?.name;
   itemData.updated_at = new Date();
   return itemRepository.itemEdit(itemData, itemId);
 }
@@ -69,6 +76,8 @@ const itemByDto = (itemDto : ItemDto, user: PartialUser): Item => {
     user,
     created_at: new Date(),
     updated_at: new Date(),
+    created_by: user.person?.name,
+    updated_by: user.person?.name,
   }
   return data
 }
