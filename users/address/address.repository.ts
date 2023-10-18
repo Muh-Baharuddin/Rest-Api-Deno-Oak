@@ -15,7 +15,7 @@ export const getAllAddress = async (_id: ObjectId): Promise<Address[]> => {
   return data?.addresses!;
 };
 
-export const getAddressById = async (_id: ObjectId, addressId: string): Promise<Address | undefined> => {
+export const getAddressById = async (_id: ObjectId, addressId: ObjectId): Promise<Address | undefined> => {
   const data = await userCollection.findOne(
     { 
       _id,
@@ -40,7 +40,7 @@ export const addNewAddress = async (address: Address, _id: ObjectId): Promise<{m
   }
 };
 
-export const editAddress = async (address: Address, _id: ObjectId, addressId: string): Promise<{message: string}> => {
+export const editAddress = async (address: Address, _id: ObjectId, addressId: ObjectId): Promise<{message: string}> => {
   address._id = new ObjectId(addressId);
   await userCollection.updateOne(
     { 
