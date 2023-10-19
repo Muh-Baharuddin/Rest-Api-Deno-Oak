@@ -27,7 +27,8 @@ export const getCategoryById = async (_id: ObjectId): Promise<Category | undefin
 
 export const getCategoryByName = async (name: string): Promise<Category | undefined> => {
   return await categoryCollection.findOne(
-    { name }
+    { name },
+    {projection: { _id: 1 }}
   )
 }
 
