@@ -20,6 +20,7 @@ export const getUserPersonData = async (_id: ObjectId): Promise<Person | undefin
     { _id },
     { projection: {
       person: {
+        _id: 1,
         name: 1,
         bod: 1,
         phoneNumber: 1,
