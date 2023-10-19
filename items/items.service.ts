@@ -24,22 +24,19 @@ export const getItemById = async (_id: string, context: Context): Promise<Item> 
 
 export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
   const user = await findUserDataByid(userId)
-
   if (user == undefined) {
     context.throw(401);
   }
+
   const category = await Promise.all(itemDto.category.map(async (category) => {
-    console.log("category", category)
     const isCategory = await getCategoryByName(category.name);
-    console.log("isCategory", isCategory)
     if(isCategory === undefined) {
       context.throw(400);
     }
     return isCategory;
   }))
-  console.log("category", category)
+
   itemDto.category = category;
-  console.log("itemDto", itemDto)
   const itemData = itemByDto(itemDto, user);
   await itemRepository.insertItem(itemData);
   return {
@@ -60,7 +57,7 @@ export const updateItem = async (itemData: Item, _id: string, context: AppContex
   if (item == undefined) {
     context.throw(401)
   }
-  itemData.updated_by = user.person?.name;
+  itemData.updated_by = user.person;
   itemData.updated_at = new Date();
   return itemRepository.itemEdit(itemData, itemId);
 }
@@ -81,11 +78,10 @@ const itemByDto = (itemDto : ItemDto, user: PartialUser): Item => {
     name: itemDto.name,
     price: itemDto.price,
     category: itemDto.category as Category[],
-    user,
     created_at: new Date(),
     updated_at: new Date(),
-    created_by: user.person?.name,
-    updated_by: user.person?.name,
+    created_by: user.person,
+    updated_by: user.person,
   }
   return data
 }
