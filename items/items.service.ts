@@ -6,6 +6,7 @@ import { Context } from "$oak/mod.ts";
 import { findUserDataByid } from "/users/users.service.ts";
 import { AppContext } from "/utils/types.ts";
 import { getCategoryByName } from "/categories/categories.service.ts";
+import { Category } from "/categories/categories.types.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
   return await itemRepository.getAllItems();
@@ -27,8 +28,18 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
   if (user == undefined) {
     context.throw(401);
   }
-  const category = await getCategoryByName(itemDto.category.name, context)
+  const category = await Promise.all(itemDto.category.map(async (category) => {
+    console.log("category", category)
+    const isCategory = await getCategoryByName(category.name);
+    console.log("isCategory", isCategory)
+    if(isCategory === undefined) {
+      context.throw(400);
+    }
+    return isCategory;
+  }))
   console.log("category", category)
+  itemDto.category = category;
+  console.log("itemDto", itemDto)
   const itemData = itemByDto(itemDto, user);
   await itemRepository.insertItem(itemData);
   return {
@@ -69,7 +80,7 @@ const itemByDto = (itemDto : ItemDto, user: PartialUser): Item => {
     _id: new ObjectId(),
     name: itemDto.name,
     price: itemDto.price,
-    category: itemDto.category.name,
+    category: itemDto.category as Category[],
     user,
     created_at: new Date(),
     updated_at: new Date(),

@@ -1,5 +1,5 @@
 import { ObjectId } from "$mongo/mod.ts";
-// import { Category } from "/categories/categories.types.ts";
+import { Category } from "/categories/categories.types.ts";
 import { User } from "/users/users.types.ts";
 
 export type PartialUser = Partial<User>;
@@ -8,7 +8,7 @@ export interface Item {
   _id: ObjectId;
   name: string;
   price: number;
-  category: string;
+  category: Category[];
   user: PartialUser;
   created_at: Date;
   updated_at: Date;
