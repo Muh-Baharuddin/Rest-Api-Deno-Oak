@@ -3,7 +3,6 @@ import { Category } from "/categories/categories.types.ts";
 import { Context } from "$oak/mod.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { CategoryDto } from "/categories/dto/category.dto.ts";
-import { findUserDataByid } from "/users/users.service.ts";
 import { AppContext } from "/utils/types.ts";
 import { getUserPersonData } from "/users/person/person.service.ts";
 import { Person } from "/users/person/person.types.ts";
@@ -28,14 +27,14 @@ export const getCategoryByName = async (name: string): Promise<Category | undefi
 }
 
 export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
-  const user = await findUserDataByid(userId)
-  if (user == undefined) {
+  const person = await getUserPersonData(userId)
+  if (person === undefined) {
     context.throw(401);
   }
 
-  const person = await getUserPersonData(userId)
-  if (person == undefined) {
-    context.throw(401);
+  const isCategory = await getCategoryByName(categoryDto.name)
+  if(isCategory !== undefined) {
+    context.throw(400, "category already exist");
   }
 
   const categoryData = categoryByDto(categoryDto, person);
@@ -48,17 +47,17 @@ export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId,
 export const updateCategory = async (categoryData: Category, _id: string, context: AppContext): Promise<{message: string}> => {
   const categoryId = new ObjectId(_id)
   const userId = context.user?._id!;
-  const user = await findUserDataByid(userId)
 
-  if (user == undefined) {
-    context.throw(401)
+  const person = await getUserPersonData(userId)
+  if (person === undefined) {
+    context.throw(401);
   }
+
   const category = await categoriesRepository.getCategoryById(categoryId)
-  
-  if (category == undefined) {
+  if (category === undefined) {
     context.throw(401)
   }
-  categoryData.updated_by = user.person!;
+  categoryData.updated_by = person;
   categoryData.updated_at = new Date();
   return categoriesRepository.editCategory(categoryData, categoryId);
 }
