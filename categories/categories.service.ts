@@ -53,7 +53,7 @@ export const updateCategory = async (categoryData: Category, _id: string, contex
   if (category == undefined) {
     context.throw(401)
   }
-  categoryData.updated_by = user.person?.name;
+  categoryData.updated_by = user.person!;
   categoryData.updated_at = new Date();
   return categoriesRepository.editCategory(categoryData, categoryId);
 }
@@ -74,8 +74,8 @@ const categoryByDto = (categoryDto : CategoryDto, user: PartialUser): Category =
     name: categoryDto.name,
     created_at: new Date(),
     updated_at: new Date(),
-    created_by: user.person?.name,
-    updated_by: user.person?.name,
+    created_by: user.person!,
+    updated_by: user.person!,
   }
   return data;
 }
