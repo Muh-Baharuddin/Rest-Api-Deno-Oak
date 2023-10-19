@@ -5,13 +5,20 @@ import { Person } from "/users/person/person.types.ts";
 import { findUserByid, findUserDataByid } from "/users/users.service.ts";
 import { PersonDto } from "/users/person/dto/person.dto.ts";
 
-export const getUserPerson = async (_id: ObjectId): Promise<Person | undefined> => {
-  return await storeRepository.getUserPerson(_id);
+export const getUserPersonAllData = async (_id: ObjectId, context: AppContext): Promise<Person | undefined> => {
+  const user = await findUserByid(_id)
+  if (user == undefined) {
+    context.throw(401)
+  }
+  return await storeRepository.getUserPersonAllData(_id);
+}
+
+export const getUserPersonData = async (_id: ObjectId): Promise<Person | undefined> => {
+  return await storeRepository.getUserPersonData(_id);
 }
 
 export const addPerson = async (person: PersonDto, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
   const user = await findUserByid(_id)
-
   if (user == undefined) {
     context.throw(401)
   }

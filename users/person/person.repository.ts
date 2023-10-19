@@ -5,11 +5,27 @@ import { Person } from "/users/person/person.types.ts";
 
 const userCollection =  db.collection<User>("users");
 
-export const getUserPerson = async (_id: ObjectId): Promise<Person | undefined> => {
+export const getUserPersonAllData = async (_id: ObjectId): Promise<Person | undefined> => {
   const data = await userCollection.findOne(
     { _id },
     { projection: {
       person: 1
+    }}
+  )
+  return data?.person;
+};
+
+export const getUserPersonData = async (_id: ObjectId): Promise<Person | undefined> => {
+  const data = await userCollection.findOne(
+    { _id },
+    { projection: {
+      person: {
+        name: 1,
+        bod: 1,
+        phoneNumber: 1,
+        ktp: 1,
+        npwp: 1
+      }
     }}
   )
   return data?.person;
