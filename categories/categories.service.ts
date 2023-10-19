@@ -78,18 +78,8 @@ const categoryByDto = (categoryDto : CategoryDto, person: Person): Category => {
     name: categoryDto.name,
     created_at: new Date(),
     updated_at: new Date(),
-    created_by: {
-      _id: person._id,
-      name: person.name,
-      bod: person.bod,
-      phoneNumber: person.phoneNumber,
-    } as Person,
-    updated_by: {
-      _id: person._id,
-      name: person.name,
-      bod: person.bod,
-      phoneNumber: person.phoneNumber,
-    } as Person
+    created_by: person,
+    updated_by: person,
   }
   return data;
 }
