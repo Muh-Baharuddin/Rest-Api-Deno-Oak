@@ -22,13 +22,8 @@ export const getCategoryById = async (_id: string, context: Context): Promise<Ca
   return category;
 }
 
-export const getCategoryByName = async (name: string, context: Context): Promise<Category> => {
-  const category = await categoriesRepository.getCategoryByName(name);
-  
-  if(category === undefined) {
-    context.throw(401);
-  }
-  return category;
+export const getCategoryByName = async (name: string): Promise<Category | undefined> => {
+  return await categoriesRepository.getCategoryByName(name);
 }
 
 export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
