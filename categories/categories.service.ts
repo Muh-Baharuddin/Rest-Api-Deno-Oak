@@ -4,8 +4,9 @@ import { Context } from "$oak/mod.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { CategoryDto } from "/categories/dto/category.dto.ts";
 import { findUserDataByid } from "/users/users.service.ts";
-import { PartialUser } from "/items/items.types.ts";
 import { AppContext } from "/utils/types.ts";
+import { getUserPerson } from "/users/person/person.service.ts";
+import { Person } from "/users/person/person.types.ts";
 
 
 export const getAllCategories = async (): Promise<Category[]> => {
@@ -28,12 +29,16 @@ export const getCategoryByName = async (name: string): Promise<Category | undefi
 
 export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
   const user = await findUserDataByid(userId)
-
   if (user == undefined) {
     context.throw(401);
   }
 
-  const categoryData = categoryByDto(categoryDto, user);
+  const person = await getUserPerson(userId)
+  if (person == undefined) {
+    context.throw(401);
+  }
+
+  const categoryData = categoryByDto(categoryDto, person);
   await categoriesRepository.insertCategory(categoryData);
   return {
     message: "add new category success"
@@ -68,14 +73,24 @@ export const removeCategory = async (_id: string, context: Context): Promise<{me
   return await categoriesRepository.deleteCategory(categoryId)
 }
 
-const categoryByDto = (categoryDto : CategoryDto, user: PartialUser): Category => {
+const categoryByDto = (categoryDto : CategoryDto, person: Person): Category => {
   const data: Category = {
     _id: new ObjectId(),
     name: categoryDto.name,
     created_at: new Date(),
     updated_at: new Date(),
-    created_by: user.person!,
-    updated_by: user.person!,
+    created_by: {
+      _id: person._id,
+      name: person.name,
+      bod: person.bod,
+      phoneNumber: person.phoneNumber,
+    } as Person,
+    updated_by: {
+      _id: person._id,
+      name: person.name,
+      bod: person.bod,
+      phoneNumber: person.phoneNumber,
+    } as Person
   }
   return data;
 }

@@ -5,12 +5,7 @@ import { Person } from "/users/person/person.types.ts";
 import { findUserByid, findUserDataByid } from "/users/users.service.ts";
 import { PersonDto } from "/users/person/dto/person.dto.ts";
 
-export const getUserPerson = async (_id: ObjectId, context: AppContext): Promise<Person> => {
-  const user = await findUserByid(_id)
-  
-  if (user == undefined) {
-    context.throw(401)
-  }
+export const getUserPerson = async (_id: ObjectId): Promise<Person | undefined> => {
   return await storeRepository.getUserPerson(_id);
 }
 
