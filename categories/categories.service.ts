@@ -5,7 +5,7 @@ import { ObjectId } from "$mongo/mod.ts";
 import { CategoryDto } from "/categories/dto/category.dto.ts";
 import { findUserDataByid } from "/users/users.service.ts";
 import { AppContext } from "/utils/types.ts";
-import { getUserPerson } from "/users/person/person.service.ts";
+import { getUserPersonData } from "/users/person/person.service.ts";
 import { Person } from "/users/person/person.types.ts";
 
 
@@ -33,7 +33,7 @@ export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId,
     context.throw(401);
   }
 
-  const person = await getUserPerson(userId)
+  const person = await getUserPersonData(userId)
   if (person == undefined) {
     context.throw(401);
   }
