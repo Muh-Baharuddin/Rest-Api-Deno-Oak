@@ -58,7 +58,18 @@ export const findUserByUsername = async(username: string): Promise<User | undefi
 export const findUserDataById = async(_id: ObjectId): Promise<User | undefined> => {
   return await userCollection.findOne(
     { _id },
-    { projection: {password: 0}}
+    { projection: {
+      email: 1,
+      username: 1,
+      person : {
+        _id : 1,
+        name: 1,
+        bod: 1,
+        phoneNumber: 1,
+        ktp: 1,
+        npwp: 1,
+      }
+    }}
   );
 }
 
