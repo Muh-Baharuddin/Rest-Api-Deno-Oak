@@ -4,8 +4,11 @@ import { authMiddleware } from "/middlewares/jwt.ts";
 import { Store } from "./stores.types.ts";
 import { StoreDto, storeValidate } from "./dto/store.dto.ts";
 import { addStore, findAllStore, findStoreById, removeStore, updateStore } from "./stores.service.ts";
+import storeAddressRouter from "./address/storeAddress.controller.ts";
 
 const storesRouter = new Router();
+
+storesRouter.use("/address", storeAddressRouter.routes(), storeAddressRouter.allowedMethods());
 
 storesRouter
   .get("/", authMiddleware , async (context): Promise<Store[]> => {
