@@ -11,7 +11,6 @@ const usersAddressRouter = new Router();
 usersAddressRouter
   .get("/", authMiddleware ,async (context: AppContext): Promise<Address[]> => {
     const userid = context?.user?._id!;
-
     const allData = await getAllAddress(userid, context)
     return context.response.body = allData;
   })

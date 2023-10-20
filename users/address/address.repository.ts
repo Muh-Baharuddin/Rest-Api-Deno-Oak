@@ -28,9 +28,6 @@ export const getAddressById = async (_id: ObjectId, addressId: ObjectId): Promis
 };
 
 export const addNewAddress = async (address: Address, _id: ObjectId): Promise<{message: string}> => {
-  const addressId = new ObjectId();
-  address._id = addressId;
-
   await userCollection.updateOne(
     { _id },
     { $addToSet: {addresses: address}},
@@ -41,7 +38,6 @@ export const addNewAddress = async (address: Address, _id: ObjectId): Promise<{m
 };
 
 export const editAddress = async (address: Address, _id: ObjectId, addressId: ObjectId): Promise<{message: string}> => {
-  address._id = new ObjectId(addressId);
   await userCollection.updateOne(
     { 
       _id,
