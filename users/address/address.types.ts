@@ -1,4 +1,5 @@
 import { ObjectId } from "$mongo/mod.ts";
+import { User } from "/users/users.types.ts";
 
 export interface Address {
   _id: ObjectId;
@@ -12,4 +13,6 @@ export interface Address {
   coordinate: string;
   created_at: Date;
   updated_at: Date;
+  created_by: User;
+  updated_by: User;
 }

@@ -4,17 +4,7 @@ import { ObjectId } from "$mongo/mod.ts";
 import { AddressDto } from "./dto/address.dto.ts";
 import { AppContext } from "/utils/types.ts";
 import { findUserByid, findUserDataByid } from "/users/users.service.ts";
-
-export const createAddressByDto = (addDto : AddressDto) => {
-  const address: Address = {
-    _id: new ObjectId(),
-    created_at: new Date(),
-    updated_at: new Date(),
-    ...addDto,
-  } ;
-
-  return address;
-}
+import { User } from "/users/users.types.ts";
 
 export const getAllAddress = async (userId: ObjectId, context: AppContext): Promise<Address[]> => {
   const user = await findUserByid(userId)
@@ -25,12 +15,14 @@ export const getAllAddress = async (userId: ObjectId, context: AppContext): Prom
   return await addressRepository.getAllAddress(userId);
 }
 
-export const getAddressId = async (userId: ObjectId, _id: string, context: AppContext): Promise<Address> => {
+export const getAddressId = async (_id: string, context: AppContext): Promise<Address> => {
   const addressId = new ObjectId(_id)
+  const userId = context.user?._id!;
   const user = await findUserByid(userId);
   if (user === undefined) {
     context.throw(401);
   }
+  
   const address = await addressRepository.getAddressById(userId, addressId);
   if(address === undefined) {
     context.throw(400, "address not found");
@@ -39,12 +31,12 @@ export const getAddressId = async (userId: ObjectId, _id: string, context: AppCo
 }
 
 export const addAddress = async (address: AddressDto, userId: ObjectId, context: AppContext): Promise<{message: string}> => {
-  const user = await findUserByid(userId)
+  const user = await findUserDataByid(userId)
 
   if (user == undefined) {
     context.throw(401)
   }
-  const newAddress = createAddressByDto(address);
+  const newAddress = createAddressByDto(address, user);
   return await addressRepository.addNewAddress(newAddress, userId);
 }
 
@@ -65,8 +57,11 @@ export const editAddress = async (address: Address, _id: string, context: AppCon
     context.throw(401);
   }
 
-  address.created_at = addressData?.created_at!;
+  address._id = addressId;
+  address.created_at = addressData.created_at;
   address.updated_at = new Date();
+  address.created_by = addressData.created_by;
+  address.updated_by = addressData.updated_by;
   return await addressRepository.editAddress(address, userId, addressId);
 }
 
@@ -77,4 +72,16 @@ export const deleteAddress = async (userId: ObjectId, addressId: string, context
     context.throw(401);
   }
   return addressRepository.deleteAddress(userId, addressId)
+}
+
+export const createAddressByDto = (addDto : AddressDto, user: User) => {
+  const address: Address = {
+    _id: new ObjectId(),
+    created_at: new Date(),
+    updated_at: new Date(),
+    created_by: user,
+    updated_by: user,
+    ...addDto,
+  } ;
+  return address;
 }
