@@ -1,12 +1,18 @@
 import { AppContext } from "/utils/types.ts";
 import { createNewStore, deleteStore, editStore, getAllStore, getStoreById } from "./stores.repository.ts";
 import { Store } from "./stores.types.ts";
+import { ObjectId } from "$mongo/mod.ts";
+import { StoreDto } from "/stores/dto/store.dto.ts";
+import { Address } from "/users/address/address.types.ts";
+import { Person } from "/users/person/person.types.ts";
+import { getUserPersonData } from "/users/person/person.service.ts";
 
 export const findAllStore = async (): Promise<Store[]> => {
   return await getAllStore();
 }
 
-export const findStoreById = async (storeId: string, context: AppContext): Promise<Store> => {
+export const findStoreById = async (_id: string, context: AppContext): Promise<Store> => {
+  const storeId = new ObjectId(_id)
   const isStore = await getStoreById(storeId)
   
   if (isStore == undefined) {
@@ -15,20 +21,36 @@ export const findStoreById = async (storeId: string, context: AppContext): Promi
   return isStore;
 }
 
-export const addStore = async (store: Store): Promise<{ message: string }> => {
-  return await createNewStore(store)
-}
-
-export const updateStore = async (store: Store, storeId: string, context: AppContext): Promise<{message: string}> => {
-  const isStore = await getStoreById(storeId)
-  if (isStore == undefined) {
+export const addStore = async (store: StoreDto, context: AppContext): Promise<{ message: string }> => {
+  const userId = context.user?._id!;
+  const person = await getUserPersonData(userId);
+  if (person == undefined) {
     context.throw(401)
   }
+  const newStore = storeByDto(store, person)
+  return await createNewStore(newStore)
+}
 
+export const updateStore = async (store: Store, _id: string, context: AppContext): Promise<{message: string}> => {
+  const userId = context.user?._id!;
+  const person = await getUserPersonData(userId);
+  if (person == undefined) {
+    context.throw(401);
+  }
+
+  const storeId = new ObjectId(_id);
+  const isStore = await getStoreById(storeId)
+  if (isStore == undefined) {
+    context.throw(401);
+  }
+
+  store.updated_by = person;
+  store.updated_at = new Date();
   return await editStore(store, storeId);
 }
 
-export const removeStore = async (storeId: string, context: AppContext): Promise<{message: string}> => {
+export const removeStore = async (_id: string, context: AppContext): Promise<{message: string}> => {
+  const storeId = new ObjectId(_id)
   const isStore = await getStoreById(storeId)
   
   if (isStore == undefined) {
@@ -37,12 +59,17 @@ export const removeStore = async (storeId: string, context: AppContext): Promise
   return await deleteStore(storeId)
 }
 
-// const storeByDto = (storeDto : StoreDto): Store => {
-//   const data: Store = {
-//     _id: new ObjectId(),
-//     name: storeDto.name,
-//     address: storeDto.address,
-//     description: storeDto.description,
-//   }
-//   return data
-// }
+const storeByDto = (storeDto : StoreDto, person: Person): Store => {
+  const data: Store = {
+    _id: new ObjectId(),
+    name: storeDto.name,
+    owner: storeDto.owner,
+    address: storeDto.address as Address,
+    description: storeDto.description,
+    created_at: new Date(),
+    updated_at: new Date(),
+    created_by: person,
+    updated_by: person,
+  }
+  return data
+}

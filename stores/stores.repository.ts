@@ -1,7 +1,6 @@
 import { Store } from "./stores.types.ts";
 import { db } from "/database/mongodb.ts";
 import { ObjectId } from "$mongo/mod.ts";
-import { User } from "/users/users.types.ts";
 
 const storeCollection =  db.collection<Store>("stores");
 
@@ -20,11 +19,11 @@ export const getAllStore = async (): Promise<Store[]> => {
   return await storeCollection.find().toArray();
 }
 
-export const getStoreById = async (userId: string): Promise<Store> => {
+export const getStoreById = async (_id: ObjectId): Promise<Store | undefined> => {
   const data = await storeCollection.findOne(
-    { _id: new ObjectId(userId) } as unknown as User,
+    { _id },
   )
-  return data!;
+  return data;
 }
 
 export const createNewStore = async(store: Store): Promise<{ message: string}> => {
@@ -34,9 +33,9 @@ export const createNewStore = async(store: Store): Promise<{ message: string}> =
   }
 }
 
-export const editStore = async (store: Store, storeId: string): Promise<{message: string}> => {
+export const editStore = async (store: Store, _id: ObjectId): Promise<{message: string}> => {
   await storeCollection.updateOne(
-    { _id: new ObjectId(storeId)} as unknown as Store,
+    { _id },
     { $set: store }
   )
   return {
@@ -44,9 +43,9 @@ export const editStore = async (store: Store, storeId: string): Promise<{message
   }
 };
 
-export const deleteStore = async (storeId: string): Promise<{message: string}> => {
+export const deleteStore = async (_id: ObjectId): Promise<{message: string}> => {
   await storeCollection.deleteOne(
-    { _id: new ObjectId(storeId)} as unknown as Store,
+    { _id },
   )
   return {
     message: "delete store success"
