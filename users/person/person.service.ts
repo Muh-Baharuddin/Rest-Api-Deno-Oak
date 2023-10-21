@@ -17,12 +17,12 @@ export const getUserPersonData = async (_id: ObjectId): Promise<Person | undefin
   return await storeRepository.getUserPersonData(_id);
 }
 
-export const addPerson = async (person: PersonDto, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
+export const addPerson = async (personDto: PersonDto, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
   const user = await findUserByid(_id)
   if (user == undefined) {
     context.throw(401)
   }
-  const newPerson = createPersonByDto(person);
+  const newPerson = createPersonByDto(personDto);
   return await storeRepository.addNewPerson(newPerson, _id);
 }
 
@@ -53,6 +53,7 @@ export const createPersonByDto = (personDto : PersonDto) => {
     created_at: new Date(),
     updated_at: new Date(),
     ...personDto,
+    bod: new Date(personDto.bod),
   } ;
 
   return person;
