@@ -11,7 +11,6 @@ import { findVerifCode } from "/auth/verification/verification.service.ts";
 
 export const login = async (userData: LoginDto, context: Context): Promise<TokenResponse> => {
   const findUser = await findUserByEmail(userData.email);
-
   if (findUser == undefined) {
     context.throw(401)
   }
@@ -25,6 +24,7 @@ export const login = async (userData: LoginDto, context: Context): Promise<Token
     _id: findUser?._id,
     email: findUser?.email,
     username: findUser?.username,
+    person : findUser.person,
   }
 
   const payload = {
