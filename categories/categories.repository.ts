@@ -32,8 +32,11 @@ export const getCategoryByName = async (name: string): Promise<Category | undefi
   )
 }
 
-export const insertCategory = async(category: Category) => {
-  return await categoryCollection.insertOne(category);
+export const insertCategory = async(category: Category): Promise<{message: string}> => {
+  await categoryCollection.insertOne(category);
+  return {
+    message: "add new category success"
+  }
 }
 
 export const editCategory = async (category: Category, _id: ObjectId): Promise<{message: string}> => {

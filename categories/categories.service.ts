@@ -1,23 +1,21 @@
 import * as categoriesRepository from "./categories.repository.ts" 
 import { Category } from "/categories/categories.types.ts";
-import { Context } from "$oak/mod.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { CategoryDto } from "/categories/dto/category.dto.ts";
 import { AppContext } from "/utils/types.ts";
-import { getUserPerson } from "/users/person/person.service.ts";
-import { Person } from "/users/person/person.types.ts";
+import { User } from "/users/users.types.ts";
 
 
 export const getAllCategories = async (): Promise<Category[]> => {
   return await categoriesRepository.getAllCategories();
 }
 
-export const getCategoryById = async (_id: string, context: Context): Promise<Category> => {
+export const getCategoryById = async (_id: string, context: AppContext): Promise<Category> => {
   const categoryId = new ObjectId(_id);
   const category = await categoriesRepository.getCategoryById(categoryId);
   
   if(category === undefined) {
-    context.throw(401);
+    context.throw(400, "category not found");
   }
   return category;
 }
@@ -26,9 +24,9 @@ export const getCategoryByName = async (name: string): Promise<Category | undefi
   return await categoriesRepository.getCategoryByName(name);
 }
 
-export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
-  const person = await getUserPerson(userId)
-  if (person === undefined) {
+export const insertCategory = async (categoryDto: CategoryDto, context: AppContext): Promise<{ message: string}> => {
+  const user = context.user;
+  if (user === undefined) {
     context.throw(401);
   }
 
@@ -37,49 +35,45 @@ export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId,
     context.throw(400, "category already exist");
   }
 
-  const categoryData = categoryByDto(categoryDto, person);
-  await categoriesRepository.insertCategory(categoryData);
-  return {
-    message: "add new category success"
-  }
+  const categoryData = categoryByDto(categoryDto, user);
+  return await categoriesRepository.insertCategory(categoryData);
 }
 
 export const updateCategory = async (categoryData: Category, _id: string, context: AppContext): Promise<{message: string}> => {
-  const categoryId = new ObjectId(_id)
-  const userId = context.user?._id!;
-
-  const person = await getUserPerson(userId)
-  if (person === undefined) {
+  const user = context.user;
+  if (user === undefined) {
     context.throw(401);
   }
 
-  const category = await categoriesRepository.getCategoryById(categoryId)
-  if (category === undefined) {
-    context.throw(401)
+  const isCategory = await getCategoryByName(categoryData.name)
+  if(isCategory !== undefined) {
+    context.throw(400, "category already exist");
   }
-  categoryData.updated_by = person;
+
+  const category = await getCategoryById(_id, context)
+  categoryData.updated_by = user;
   categoryData.updated_at = new Date();
-  return categoriesRepository.editCategory(categoryData, categoryId);
+  return categoriesRepository.editCategory(categoryData, category._id);
 }
 
-export const removeCategory = async (_id: string, context: Context): Promise<{message: string}> => {
+export const removeCategory = async (_id: string, context: AppContext): Promise<{message: string}> => {
   const categoryId = new ObjectId(_id)
   const category = await categoriesRepository.getCategoryById(categoryId)
   
   if (category == undefined) {
-    context.throw(401)
+    context.throw(400, "category not found")
   }
   return await categoriesRepository.deleteCategory(categoryId)
 }
 
-const categoryByDto = (categoryDto : CategoryDto, person: Person): Category => {
+const categoryByDto = (categoryDto : CategoryDto, user: User): Category => {
   const data: Category = {
     _id: new ObjectId(),
     name: categoryDto.name,
     created_at: new Date(),
     updated_at: new Date(),
-    created_by: person,
-    updated_by: person,
+    created_by: user,
+    updated_by: user,
   }
   return data;
 }
