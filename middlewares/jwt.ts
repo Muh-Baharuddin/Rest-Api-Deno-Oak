@@ -1,4 +1,4 @@
-import { decode } from "$djwt/mod.ts";
+import { decode, getNumericDate } from "$djwt/mod.ts";
 import { Next } from "$oak/mod.ts";
 import { ObjectId } from "$mongo/deps.ts";
 import { User } from "../users/users.types.ts";
@@ -35,9 +35,9 @@ export const authMiddleware = async (ctx: AppContext, next: Next) => {
     ctx.throw(403);
   }
 
-  const now = Date.now()
+  const now = getNumericDate(new Date)
   if(payloadData.exp! < now) {
-    ctx.throw(401);
+    ctx.throw(401, "token is expired");
   }
 
   const _id = new ObjectId(payloadData.user?._id)
