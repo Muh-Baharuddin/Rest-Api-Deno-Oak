@@ -30,9 +30,16 @@ export const authMiddleware = async (ctx: AppContext, next: Next) => {
   } catch(_err) {
     ctx.throw(403);
   }
+  
   if( payloadData === undefined) {
     ctx.throw(403);
   }
+
+  const now = Date.now()
+  if(payloadData.exp! < now) {
+    ctx.throw(401);
+  }
+
   const _id = new ObjectId(payloadData.user?._id)
   ctx.user = payloadData.user as User;
   ctx.user._id = _id;
