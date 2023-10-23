@@ -32,9 +32,8 @@ usersAddressRouter
     return context.response.body = editedAddress;
   })
   .delete("/:id", authMiddleware, async(context) : Promise<{ message: string}> => {
-    const userId = (context as AppContext).user?._id!;
     const addressId = context?.params?.id;
-    const deleted = await deleteAddress(userId, addressId, context);
+    const deleted = await deleteAddress(addressId, context);
     return context.response.body = deleted;
   });
 
