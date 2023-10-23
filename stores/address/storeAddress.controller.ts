@@ -1,5 +1,4 @@
 import { Router } from "$oak/mod.ts";
-import { AppContext } from "/utils/types.ts";
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { addAddress, deleteStoreAddress, editStoreAddress, getStoreAddressById } from "./storeAddress.service.ts";
 import { validate } from "/middlewares/validate.ts";
@@ -28,9 +27,8 @@ storeAddressRouter
     return context.response.body = editedAddress;
   })
   .delete("/:id", authMiddleware, async(context) : Promise<{ message: string}> => {
-    const userId = (context as AppContext).user?._id!;
     const storeId = context?.params?.id;
-    const deleted = await deleteStoreAddress(userId, storeId, context);
+    const deleted = await deleteStoreAddress(storeId, context);
     return context.response.body = deleted;
   });
 

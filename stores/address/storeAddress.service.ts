@@ -1,15 +1,13 @@
 import * as addressRepository from "./storeAddress.repository.ts"
 import { ObjectId } from "$mongo/mod.ts";
 import { AppContext } from "/utils/types.ts";
-import { findUserByid, findUserDataByid } from "/users/users.service.ts";
 import { Address } from "/users/address/address.types.ts";
 import { AddressDto } from "/users/address/dto/address.dto.ts";
 import { createAddressByDto } from "/users/address/address.service.ts";
 import { findStoreById } from "/stores/stores.service.ts";
 
 export const getStoreAddressById = async (storeId: string, context: AppContext): Promise<Address> => {
-  const userId = context.user?._id!;
-  const user = await findUserByid(userId);
+  const user = context.user;
   if (user === undefined) {
     context.throw(401);
   }
@@ -27,12 +25,7 @@ export const getStoreAddressById = async (storeId: string, context: AppContext):
 }
 
 export const addAddress = async (address: AddressDto, storeId: string, context: AppContext): Promise<{message: string}> => {
-  const userId = context.user?._id;
-  if (userId == undefined) {
-    context.throw(401);
-  }
-  
-  const user = await findUserDataByid(userId);
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
@@ -46,12 +39,7 @@ export const addAddress = async (address: AddressDto, storeId: string, context: 
 }
 
 export const editStoreAddress = async (address: Address, _id: string, context: AppContext): Promise<{message: string}> => {
-  const userId = context.user?._id;
-  if (userId == undefined) {
-    context.throw(401);
-  }
-
-  const user = await findUserDataByid(userId);
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
@@ -79,11 +67,12 @@ export const editStoreAddress = async (address: Address, _id: string, context: A
   return await addressRepository.editStoreAddress(address, store._id);
 }
 
-export const deleteStoreAddress = async (userId: ObjectId, addressId: string, context: AppContext): Promise<{message: string}> => {
-  const user = await findUserByid(userId);
-
+export const deleteStoreAddress = async (addressId: string, context: AppContext): Promise<{message: string}> => {
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
-  return addressRepository.deleteStoreAddress(userId, addressId)
+
+  await getStoreAddressById(addressId, context)
+  return addressRepository.deleteStoreAddress(user._id, addressId)
 }
