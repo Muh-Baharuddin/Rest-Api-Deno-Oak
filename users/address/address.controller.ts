@@ -11,13 +11,12 @@ const usersAddressRouter = new Router();
 usersAddressRouter
   .get("/", authMiddleware ,async (context: AppContext): Promise<Address[]> => {
     const userid = context?.user?._id!;
-    const allData = await getAllAddress(userid, context)
+    const allData = await getAllAddress(userid)
     return context.response.body = allData;
   })
   .get("/:id", authMiddleware, async (context) : Promise<Address> => {
-    const userId = (context as AppContext).user?._id!;
     const addressId = context?.params?.id;
-    const userAddress = await getAddressId(userId, addressId, context);
+    const userAddress = await getAddressId(addressId, context);
     return context.response.body = userAddress;
   })
   .post("/", authMiddleware, validate(addressValidate), async (context: AppContext) : Promise<{ message: string}> => {

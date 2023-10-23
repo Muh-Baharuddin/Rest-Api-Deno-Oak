@@ -3,25 +3,16 @@ import { Address } from "./address.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { AddressDto } from "./dto/address.dto.ts";
 import { AppContext } from "/utils/types.ts";
-import { findUserByid, findUserDataByid } from "/users/users.service.ts";
+import { findUserByid } from "/users/users.service.ts";
 import { User } from "/users/users.types.ts";
 
-export const getAllAddress = async (userId: ObjectId, context: AppContext): Promise<Address[]> => {
-  const user = await findUserByid(userId)
-  
-  if (user == undefined) {
-    context.throw(401)
-  }
+export const getAllAddress = async (userId: ObjectId): Promise<Address[]> => {
   return await addressRepository.getAllAddress(userId);
 }
 
 export const getAddressId = async (_id: string, context: AppContext): Promise<Address> => {
   const addressId = new ObjectId(_id)
   const userId = context.user?._id!;
-  const user = await findUserByid(userId);
-  if (user === undefined) {
-    context.throw(401);
-  }
   
   const address = await addressRepository.getAddressById(userId, addressId);
   if(address === undefined) {
@@ -31,8 +22,7 @@ export const getAddressId = async (_id: string, context: AppContext): Promise<Ad
 }
 
 export const addAddress = async (address: AddressDto, userId: ObjectId, context: AppContext): Promise<{message: string}> => {
-  const user = await findUserDataByid(userId)
-
+  const user = context.user;
   if (user == undefined) {
     context.throw(401)
   }
@@ -42,27 +32,18 @@ export const addAddress = async (address: AddressDto, userId: ObjectId, context:
 
 export const editAddress = async (address: Address, _id: string, context: AppContext): Promise<{message: string}> => {
   const addressId = new ObjectId(_id);
-  const userId = context.user?._id;
-  if (userId == undefined) {
-    context.throw(401);
-  }
-
-  const user = await findUserDataByid(userId);
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
 
-  const addressData = await addressRepository.getAddressById(userId, addressId);
+  const addressData = await addressRepository.getAddressById(user._id, addressId);
   if (addressData === undefined) {
     context.throw(401);
   }
 
-  address._id = addressId;
-  address.created_at = addressData.created_at;
-  address.updated_at = new Date();
-  address.created_by = addressData.created_by;
-  address.updated_by = addressData.updated_by;
-  return await addressRepository.editAddress(address, userId, addressId);
+  const updatedAddress = updateAddressData(address, addressData, user)
+  return await addressRepository.editAddress(updatedAddress, user._id, addressId);
 }
 
 export const deleteAddress = async (userId: ObjectId, addressId: string, context: AppContext): Promise<{message: string}> => {
@@ -84,4 +65,16 @@ export const createAddressByDto = (addDto : AddressDto, user: User) => {
     ...addDto,
   } ;
   return address;
+}
+
+export const updateAddressData = (address : Address, previousAddress: Address, user: User) => {
+  const updatedAddress: Address = {
+    ...address,
+    _id: previousAddress._id,
+    created_at: previousAddress.created_at,
+    updated_at: new Date(),
+    created_by: previousAddress.created_by,
+    updated_by: user,
+  } ;
+  return updatedAddress;
 }
