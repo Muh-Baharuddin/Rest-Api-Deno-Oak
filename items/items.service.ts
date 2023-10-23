@@ -53,7 +53,7 @@ export const updateItem = async (itemData: Item, _id: string, context: AppContex
 
   const item = await itemRepository.getItemById(itemId)
   if (item == undefined) {
-    context.throw(401)
+    context.throw(400, "item not found")
   }
 
   const category = await Promise.all(itemData.category.map(async (category) => {
@@ -75,7 +75,7 @@ export const removeItem = async (_id: string, context: Context): Promise<{messag
   const item = await itemRepository.getItemById(itemId)
   
   if (item == undefined) {
-    context.throw(401)
+    context.throw(400, "item not found")
   }
   return await itemRepository.deleteItem(itemId)
 }
