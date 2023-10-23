@@ -3,7 +3,6 @@ import { createNewStore, deleteStore, editStore, getAllStore, getStoreById } fro
 import { Store } from "./stores.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { StoreDto } from "/stores/dto/store.dto.ts";
-import { findUserDataByid } from "/users/users.service.ts";
 import { User } from "/users/users.types.ts";
 
 export const findAllStore = async (): Promise<Store[]> => {
@@ -21,8 +20,7 @@ export const findStoreById = async (_id: string, context: AppContext): Promise<S
 }
 
 export const addStore = async (store: StoreDto, context: AppContext): Promise<{ message: string }> => {
-  const userId = context.user?._id!;
-  const user = await findUserDataByid(userId);
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
@@ -31,8 +29,7 @@ export const addStore = async (store: StoreDto, context: AppContext): Promise<{ 
 }
 
 export const updateStore = async (store: Store, _id: string, context: AppContext): Promise<{message: string}> => {
-  const userId = context.user?._id!;
-  const user = await findUserDataByid(userId);
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
