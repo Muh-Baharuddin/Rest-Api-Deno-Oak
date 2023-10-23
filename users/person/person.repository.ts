@@ -15,23 +15,6 @@ export const getUserPersonAllData = async (_id: ObjectId): Promise<Person | unde
   return data?.person;
 };
 
-export const getUserPersonData = async (_id: ObjectId): Promise<Person | undefined> => {
-  const data = await userCollection.findOne(
-    { _id },
-    { projection: {
-      person: {
-        _id: 1,
-        name: 1,
-        bod: 1,
-        phoneNumber: 1,
-        ktp: 1,
-        npwp: 1
-      }
-    }}
-  )
-  return data?.person;
-};
-
 export const addNewPerson = async (person: Person, _id: ObjectId): Promise<{message: string}> => {
   await userCollection.updateOne(
       { _id },

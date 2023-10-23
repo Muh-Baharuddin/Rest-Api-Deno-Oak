@@ -2,52 +2,51 @@ import { ObjectId } from "$mongo/mod.ts";
 import { AppContext } from "/utils/types.ts";
 import * as storeRepository from "./person.repository.ts"
 import { Person } from "/users/person/person.types.ts";
-import { findUserByid } from "/users/users.service.ts";
 import { PersonDto } from "/users/person/dto/person.dto.ts";
 
-export const getUserPersonAllData = async (_id: ObjectId, context: AppContext): Promise<Person | undefined> => {
-  const user = await findUserByid(_id)
-  if (user == undefined) {
-    context.throw(401)
-  }
+export const getUserPerson = async (_id: ObjectId): Promise<Person | undefined> => {
   return await storeRepository.getUserPersonAllData(_id);
 }
 
-export const getUserPersonData = async (_id: ObjectId): Promise<Person | undefined> => {
-  return await storeRepository.getUserPersonData(_id);
-}
-
-export const addPerson = async (personDto: PersonDto, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
-  const user = await findUserByid(_id)
+export const addPerson = async (personDto: PersonDto, context: AppContext): Promise<{message: string}> => {
+  const user = context.user;
   if (user == undefined) {
     context.throw(401)
   }
   const newPerson = createPersonByDto(personDto);
-  return await storeRepository.addNewPerson(newPerson, _id);
+  return await storeRepository.addNewPerson(newPerson, user._id);
 }
 
-export const updatePerson = async (person: Person, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
-  const personData = await getUserPersonAllData(_id, context)
-  
-  if (personData == undefined) {
-    context.throw(401)
-  }
-  person._id = personData._id;
-  person.created_at = personData.created_at;
-  person.updated_at = new Date();
-  return storeRepository.editPerson(person, _id);
-}
-
-export const removePerson = async (_id: ObjectId, context: AppContext): Promise<{message: string}> => {
-  const user = await findUserByid(_id)
-  
+export const updatePerson = async (personDto: PersonDto, context: AppContext): Promise<{message: string}> => {
+  const user = context.user;
   if (user == undefined) {
     context.throw(401)
   }
-  return await storeRepository.deletePerson(_id)
+
+  let person = await getUserPerson(user._id);
+  if (person == undefined) {
+    person = createPersonByDto(personDto)
+  } else {
+    person = updatePersonData(personDto, person);
+  }
+  
+  return storeRepository.editPerson(person, user._id);
 }
 
-export const createPersonByDto = (personDto : PersonDto) => {
+export const removePerson = async (context: AppContext): Promise<{message: string}> => {
+  const user = context.user;
+  if (user == undefined) {
+    context.throw(401)
+  }
+
+  const person = await getUserPerson(user._id);
+  if (person == undefined) {
+    context.throw(401, "person not found")
+  }
+  return await storeRepository.deletePerson(user._id)
+}
+
+const createPersonByDto = (personDto : PersonDto) => {
   const person: Person = {
     _id: new ObjectId(),
     created_at: new Date(),
@@ -57,4 +56,15 @@ export const createPersonByDto = (personDto : PersonDto) => {
   } ;
 
   return person;
+}
+
+const updatePersonData = (personDto : PersonDto, previousPerson: Person) => {
+  const updatedPerson: Person = {
+    ...personDto,
+    bod: new Date(personDto.bod),
+    created_at: previousPerson.created_at,
+    updated_at: new Date(),
+    _id: previousPerson._id,
+  } ;
+  return updatedPerson;
 }
