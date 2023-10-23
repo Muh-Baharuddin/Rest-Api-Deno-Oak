@@ -4,7 +4,7 @@ import { Context } from "$oak/mod.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { CategoryDto } from "/categories/dto/category.dto.ts";
 import { AppContext } from "/utils/types.ts";
-import { getUserPersonData } from "/users/person/person.service.ts";
+import { getUserPerson } from "/users/person/person.service.ts";
 import { Person } from "/users/person/person.types.ts";
 
 
@@ -27,7 +27,7 @@ export const getCategoryByName = async (name: string): Promise<Category | undefi
 }
 
 export const insertCategory = async (categoryDto: CategoryDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
-  const person = await getUserPersonData(userId)
+  const person = await getUserPerson(userId)
   if (person === undefined) {
     context.throw(401);
   }
@@ -48,7 +48,7 @@ export const updateCategory = async (categoryData: Category, _id: string, contex
   const categoryId = new ObjectId(_id)
   const userId = context.user?._id!;
 
-  const person = await getUserPersonData(userId)
+  const person = await getUserPerson(userId)
   if (person === undefined) {
     context.throw(401);
   }
