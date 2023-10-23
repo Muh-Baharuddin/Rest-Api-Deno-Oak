@@ -3,7 +3,6 @@ import { Address } from "./address.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
 import { AddressDto } from "./dto/address.dto.ts";
 import { AppContext } from "/utils/types.ts";
-import { findUserByid } from "/users/users.service.ts";
 import { User } from "/users/users.types.ts";
 
 export const getAllAddress = async (userId: ObjectId): Promise<Address[]> => {
@@ -39,20 +38,26 @@ export const editAddress = async (address: Address, _id: string, context: AppCon
 
   const addressData = await addressRepository.getAddressById(user._id, addressId);
   if (addressData === undefined) {
-    context.throw(401);
+    context.throw(401, "address not found");
   }
 
   const updatedAddress = updateAddressData(address, addressData, user)
   return await addressRepository.editAddress(updatedAddress, user._id, addressId);
 }
 
-export const deleteAddress = async (userId: ObjectId, addressId: string, context: AppContext): Promise<{message: string}> => {
-  const user = await findUserByid(userId);
-
+export const deleteAddress = async (_id: string, context: AppContext): Promise<{message: string}> => {
+  const user = context.user;
   if (user == undefined) {
     context.throw(401);
   }
-  return addressRepository.deleteAddress(userId, addressId)
+
+  const addressId = new ObjectId(_id)
+  const address = await addressRepository.getAddressById(user._id, addressId);
+  if (address === undefined) {
+    context.throw(400, "address not found");
+  }
+
+  return addressRepository.deleteAddress(user._id, addressId)
 }
 
 export const createAddressByDto = (addDto : AddressDto, user: User) => {
@@ -70,11 +75,11 @@ export const createAddressByDto = (addDto : AddressDto, user: User) => {
 export const updateAddressData = (address : Address, previousAddress: Address, user: User) => {
   const updatedAddress: Address = {
     ...address,
-    _id: previousAddress._id,
     created_at: previousAddress.created_at,
     updated_at: new Date(),
     created_by: previousAddress.created_by,
     updated_by: user,
+    _id: previousAddress._id,
   } ;
   return updatedAddress;
 }

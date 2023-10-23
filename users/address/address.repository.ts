@@ -19,7 +19,7 @@ export const getAddressById = async (_id: ObjectId, addressId: ObjectId): Promis
   const data = await userCollection.findOne(
     { 
       _id,
-      "addresses._id": new ObjectId(addressId),
+      "addresses._id": addressId,
     } as unknown as User,
     { projection: {"addresses.$": 1}}
   )
@@ -41,7 +41,7 @@ export const editAddress = async (address: Address, _id: ObjectId, addressId: Ob
   await userCollection.updateOne(
     { 
       _id,
-      'addresses._id': new ObjectId(addressId)
+      'addresses._id': addressId
     } as unknown as User,
     { $set: {"addresses.$": address} }
   )
@@ -51,14 +51,14 @@ export const editAddress = async (address: Address, _id: ObjectId, addressId: Ob
 };
 
 
-export const deleteAddress = async (_id: ObjectId, addressId: string): Promise<{message: string}> => {
+export const deleteAddress = async (_id: ObjectId, addressId: ObjectId): Promise<{message: string}> => {
   await userCollection.updateOne(
     { _id,
-      "addresses._id": new ObjectId(addressId),
+      "addresses._id": addressId,
     } as unknown as User,
     {$pull: {
       "addresses": {
-        "_id": new ObjectId(addressId)
+        "_id": addressId
       }
     }}
   )
