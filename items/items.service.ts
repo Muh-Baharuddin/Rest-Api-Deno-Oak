@@ -6,8 +6,7 @@ import { Context } from "$oak/mod.ts";
 import { AppContext } from "/utils/types.ts";
 import { getCategoryByName } from "/categories/categories.service.ts";
 import { Category } from "/categories/categories.types.ts";
-import { getUserPersonData } from "/users/person/person.service.ts";
-import { Person } from "/users/person/person.types.ts";
+import { User } from "/users/users.types.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
   return await itemRepository.getAllItems();
@@ -23,9 +22,9 @@ export const getItemById = async (_id: string, context: Context): Promise<Item> 
   return item;
 }
 
-export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Context): Promise<{ message: string}> => {
-  const person = await getUserPersonData(userId)
-  if (person == undefined) {
+export const insertItem = async (itemDto: ItemDto, context: AppContext): Promise<{ message: string}> => {
+  const user = context.user;
+  if (user == undefined) {
     context.throw(401);
   }
 
@@ -38,7 +37,7 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
   }))
 
   itemDto.category = category;
-  const itemData = itemByDto(itemDto, person);
+  const itemData = itemByDto(itemDto, user);
   await itemRepository.insertItem(itemData);
   return {
     message: "add new item success"
@@ -47,10 +46,8 @@ export const insertItem = async (itemDto: ItemDto, userId: ObjectId, context: Co
 
 export const updateItem = async (itemData: Item, _id: string, context: AppContext): Promise<{message: string}> => {
   const itemId = new ObjectId(_id)
-  const userId = context.user?._id!;
-
-  const person = await getUserPersonData(userId)
-  if (person == undefined) {
+  const user = context.user;
+  if (user == undefined) {
     context.throw(401)
   }
 
@@ -68,7 +65,7 @@ export const updateItem = async (itemData: Item, _id: string, context: AppContex
   }))
 
   itemData.category = category;
-  itemData.updated_by = person;
+  itemData.updated_by = user;
   itemData.updated_at = new Date();
   return itemRepository.itemEdit(itemData, itemId);
 }
@@ -83,7 +80,7 @@ export const removeItem = async (_id: string, context: Context): Promise<{messag
   return await itemRepository.deleteItem(itemId)
 }
 
-const itemByDto = (itemDto : ItemDto, person: Person): Item => {
+const itemByDto = (itemDto : ItemDto, user: User): Item => {
   const data: Item = {
     _id: new ObjectId(),
     name: itemDto.name,
@@ -91,8 +88,8 @@ const itemByDto = (itemDto : ItemDto, person: Person): Item => {
     category: itemDto.category as Category[],
     created_at: new Date(),
     updated_at: new Date(),
-    created_by: person,
-    updated_by: person,
+    created_by: user,
+    updated_by: user,
   }
   return data
 }

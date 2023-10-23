@@ -21,8 +21,7 @@ itemsRouter
   })
   .post("/", authMiddleware, validate(itemValidate), async (context: AppContext) : Promise<{ message: string}> => {
     const item: ItemDto = await context.request.body().value;
-    const userid = context?.user?._id!;
-    const newItem = await insertItem(item, userid, context);
+    const newItem = await insertItem(item, context);
     return context.response.body = newItem;
   })
   .put("/:id", authMiddleware, validate(itemValidate), async(context): Promise<{message: string}> => {
