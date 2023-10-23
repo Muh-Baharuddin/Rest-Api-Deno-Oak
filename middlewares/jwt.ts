@@ -37,7 +37,7 @@ export const authMiddleware = async (ctx: AppContext, next: Next) => {
 
   const now = getNumericDate(new Date)
   if(payloadData.exp! < now) {
-    ctx.throw(401, "token is expired");
+    ctx.throw(403, "token is expired");
   }
 
   const _id = new ObjectId(payloadData.user?._id)
