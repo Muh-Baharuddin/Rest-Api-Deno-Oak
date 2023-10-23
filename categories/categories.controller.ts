@@ -4,25 +4,21 @@ import { getAllCategories, getCategoryById, insertCategory, removeCategory, upda
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { validate } from "/middlewares/validate.ts";
 import { CategoryDto, categoryValidate } from "/categories/dto/category.dto.ts";
-import { AppContext } from "/utils/types.ts";
-
 
 const categoriesRouter = new Router();
 
 categoriesRouter
   .get("/", authMiddleware ,async (context): Promise<Category[]> => {
-    const allCategories = await getAllCategories()
-    return context.response.body = allCategories;
+    return context.response.body = await getAllCategories();
   })
   .get("/:id", authMiddleware ,async (context): Promise<Category> => {
     const categoryId = context.params.id;
     const category = await getCategoryById(categoryId, context)
     return context.response.body = category;
   })
-  .post("/", authMiddleware, validate(categoryValidate), async (context: AppContext) : Promise<{ message: string}> => {
+  .post("/", authMiddleware, validate(categoryValidate), async (context) : Promise<{ message: string}> => {
     const categoryDto: CategoryDto = await context.request.body().value;
-    const userid = context?.user?._id!;
-    const newCategory = await insertCategory(categoryDto, userid, context);
+    const newCategory = await insertCategory(categoryDto, context);
     return context.response.body = newCategory;
   })
   .put("/:id", authMiddleware, validate(categoryValidate), async (context) : Promise<{ message: string}> => {
