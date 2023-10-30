@@ -5,9 +5,11 @@ import { getAllItems, getItemById, insertItem, removeItem, updateItem } from "/i
 import { validate } from "/middlewares/validate.ts";
 import { ItemDto, itemValidate } from "/items/dto/item.dto.ts";
 import { AppContext } from "/utils/types.ts";
-
+import imageRouter from "./image/images.controller.ts";
 
 const itemsRouter = new Router();
+
+itemsRouter.use("/image", imageRouter.routes(), imageRouter.allowedMethods());
 
 itemsRouter
   .get("/", authMiddleware ,async (context): Promise<Item[]> => {
