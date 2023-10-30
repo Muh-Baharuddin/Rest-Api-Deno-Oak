@@ -10,8 +10,7 @@ export const getAllCategories = async (): Promise<Category[]> => {
   return await categoriesRepository.getAllCategories();
 }
 
-export const getCategoryById = async (_id: string, context: AppContext): Promise<Category> => {
-  const categoryId = new ObjectId(_id);
+export const getCategoryById = async (categoryId: ObjectId, context: AppContext): Promise<Category> => {
   const category = await categoriesRepository.getCategoryById(categoryId);
   
   if(category === undefined) {
@@ -39,7 +38,7 @@ export const insertCategory = async (categoryDto: CategoryDto, context: AppConte
   return await categoriesRepository.insertCategory(categoryData);
 }
 
-export const updateCategory = async (categoryData: Category, _id: string, context: AppContext): Promise<{message: string}> => {
+export const updateCategory = async (categoryData: Category, _id: ObjectId, context: AppContext): Promise<{message: string}> => {
   const user = context.user;
   if (user === undefined) {
     context.throw(401);

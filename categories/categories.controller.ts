@@ -4,6 +4,7 @@ import { getAllCategories, getCategoryById, insertCategory, removeCategory, upda
 import { authMiddleware } from "/middlewares/jwt.ts";
 import { validate } from "/middlewares/validate.ts";
 import { CategoryDto, categoryValidate } from "/categories/dto/category.dto.ts";
+import { ObjectId } from "$mongo/mod.ts";
 
 const categoriesRouter = new Router();
 
@@ -12,7 +13,7 @@ categoriesRouter
     return context.response.body = await getAllCategories();
   })
   .get("/:id", authMiddleware ,async (context): Promise<Category> => {
-    const categoryId = context.params.id;
+    const categoryId = new ObjectId(context.params.id);
     const category = await getCategoryById(categoryId, context)
     return context.response.body = category;
   })
@@ -23,7 +24,7 @@ categoriesRouter
   })
   .put("/:id", authMiddleware, validate(categoryValidate), async (context) : Promise<{ message: string}> => {
     const category: Category = await context.request.body().value;
-    const categoryId = context.params.id!;
+    const categoryId = new ObjectId(context.params.id);
     const newCategory = await updateCategory(category, categoryId, context);
     return context.response.body = newCategory;
   })

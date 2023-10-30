@@ -5,7 +5,6 @@ import { ObjectId } from "$mongo/mod.ts";
 import { Context } from "$oak/mod.ts";
 import { AppContext } from "/utils/types.ts";
 import { getCategoryByName } from "/categories/categories.service.ts";
-import { Category } from "/categories/categories.types.ts";
 import { User } from "/users/users.types.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
@@ -51,7 +50,7 @@ export const insertItem = async (itemDto: ItemDto, context: AppContext): Promise
   }
 }
 
-export const updateItem = async (itemData: Item, _id: string, context: AppContext): Promise<{message: string}> => {
+export const updateItem = async (itemDto: ItemDto, _id: string, context: AppContext): Promise<{message: string}> => {
   const itemId = new ObjectId(_id)
   const user = context.user;
   if (user == undefined) {
@@ -63,25 +62,10 @@ export const updateItem = async (itemData: Item, _id: string, context: AppContex
     context.throw(400, "item not found")
   }
 
-  const imageUrl = itemData.image.map(image => {
-    itemData.image = image.split("/").slice(3);
-    const data = `${itemData.image[0]}/${itemData.image[1]}`;
-    return data;
-  });
+  item.updated_by = user;
+  const updatedItem = await updateItemByDto(itemDto, item, context);
 
-  const category = await Promise.all(itemData.category.map(async (category) => {
-    const isCategory = await getCategoryByName(category.name);
-    if(isCategory === undefined) {
-      context.throw(400, "category is not exist");
-    }
-    return isCategory;
-  }))
-
-  itemData.image = imageUrl;
-  itemData.category = category;
-  itemData.updated_by = user;
-  itemData.updated_at = new Date();
-  return itemRepository.itemEdit(itemData, itemId);
+  return itemRepository.itemEdit(updatedItem, itemId);
 }
 
 export const removeItem = async (_id: string, context: Context): Promise<{message: string}> => {
@@ -95,25 +79,25 @@ export const removeItem = async (_id: string, context: Context): Promise<{messag
 }
 
 const itemByDto = async (itemDto : ItemDto, user: User, context: AppContext): Promise<Item> => {
-  const newImageUrl = itemDto.image.map(image => {
+  const imageUrl = itemDto.image.map(image => {
     itemDto.image = image.split("/").slice(3);
     const data = `${itemDto.image[0]}/${itemDto.image[1]}`;
     return data;
   });
 
-  const itemCategory = await Promise.all(itemDto.category.map(async (category: {name: string}): Promise<Category> => {
-    const isCategory = await getCategoryByName(category.name);
+  const itemCategory = await Promise.all(itemDto.category.map(async (category) => {
+    const isCategory = await getCategoryByName(category);
     if(isCategory === undefined) {
       context.throw(400, "category is not exist");
     }
-    return isCategory;
+    return isCategory._id;
   }))
 
   const data: Item = {
     _id: new ObjectId(),
     name: itemDto.name,
     price: itemDto.price,
-    image: newImageUrl,
+    image: imageUrl,
     category: itemCategory,
     created_at: new Date(),
     updated_at: new Date(),
@@ -121,4 +105,33 @@ const itemByDto = async (itemDto : ItemDto, user: User, context: AppContext): Pr
     updated_by: user,
   }
   return data
+}
+
+const updateItemByDto = async (itemDto : ItemDto, itemData: Item, context: AppContext) => {
+  const imageUrl = itemDto.image.map(image => {
+    itemDto.image = image.split("/").slice(3);
+    const data = `${itemDto.image[0]}/${itemDto.image[1]}`;
+    return data;
+  });
+  
+  const itemCategory = await Promise.all(itemDto.category.map(async (category) => {
+    const isCategory = await getCategoryByName(category);
+    if(isCategory === undefined) {
+      context.throw(400, "category is not exist");
+    }
+    return isCategory._id;
+  }))
+
+  const item: Item = {
+    _id: itemData._id,
+    name: itemDto.name,
+    price: itemDto.price,
+    image: imageUrl,
+    category: itemCategory,
+    created_at: itemData.created_at,
+    updated_at: new Date(),
+    created_by: itemData.created_by,
+    updated_by: itemData.updated_by,
+  }
+  return item
 }
