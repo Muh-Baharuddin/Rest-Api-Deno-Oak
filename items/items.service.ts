@@ -19,6 +19,11 @@ export const getItemById = async (_id: string, context: Context): Promise<Item> 
   if(item === undefined) {
     context.throw(401);
   }
+
+  item.image = await Promise.all(item.image.map(url => {
+    const newUrl = `https://i.ibb.co/${url}`;
+    return newUrl;
+  }))
   return item;
 }
 
@@ -28,17 +33,8 @@ export const insertItem = async (itemDto: ItemDto, context: AppContext): Promise
     context.throw(401);
   }
 
-  const category = await Promise.all(itemDto.category.map(async (category) => {
-    const isCategory = await getCategoryByName(category.name);
-    if(isCategory === undefined) {
-      context.throw(400, "category is not exist");
-    }
-    return isCategory;
-  }))
-
-  itemDto.category = category;
-  const itemData = itemByDto(itemDto, user);
-  await itemRepository.insertItem(itemData);
+  const item = await itemByDto(itemDto, user, context);
+  await itemRepository.insertItem(item);
   return {
     message: "add new item success"
   }
@@ -56,6 +52,12 @@ export const updateItem = async (itemData: Item, _id: string, context: AppContex
     context.throw(400, "item not found")
   }
 
+  const imageUrl = itemData.image.map(image => {
+    itemData.image = image.split("/").slice(3);
+    const data = `${itemData.image[0]}/${itemData.image[1]}`;
+    return data;
+  });
+
   const category = await Promise.all(itemData.category.map(async (category) => {
     const isCategory = await getCategoryByName(category.name);
     if(isCategory === undefined) {
@@ -64,6 +66,7 @@ export const updateItem = async (itemData: Item, _id: string, context: AppContex
     return isCategory;
   }))
 
+  itemData.image = imageUrl;
   itemData.category = category;
   itemData.updated_by = user;
   itemData.updated_at = new Date();
@@ -80,12 +83,27 @@ export const removeItem = async (_id: string, context: Context): Promise<{messag
   return await itemRepository.deleteItem(itemId)
 }
 
-const itemByDto = (itemDto : ItemDto, user: User): Item => {
+const itemByDto = async (itemDto : ItemDto, user: User, context: AppContext): Promise<Item> => {
+  const newImageUrl = itemDto.image.map(image => {
+    itemDto.image = image.split("/").slice(3);
+    const data = `${itemDto.image[0]}/${itemDto.image[1]}`;
+    return data;
+  });
+
+  const itemCategory = await Promise.all(itemDto.category.map(async (category: {name: string}): Promise<Category> => {
+    const isCategory = await getCategoryByName(category.name);
+    if(isCategory === undefined) {
+      context.throw(400, "category is not exist");
+    }
+    return isCategory;
+  }))
+
   const data: Item = {
     _id: new ObjectId(),
     name: itemDto.name,
     price: itemDto.price,
-    category: itemDto.category as Category[],
+    image: newImageUrl,
+    category: itemCategory,
     created_at: new Date(),
     updated_at: new Date(),
     created_by: user,
