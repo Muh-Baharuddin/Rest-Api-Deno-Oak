@@ -28,8 +28,8 @@ itemsRouter
   })
   .put("/:id", authMiddleware, validate(itemValidate), async(context): Promise<{message: string}> => {
     const itemId = context.params.id;
-    const itemData: Item = await context.request.body().value;
-    const updateData = await updateItem(itemData, itemId, context);
+    const newItem: ItemDto = await context.request.body().value;
+    const updateData = await updateItem(newItem, itemId, context);
     return context.response.body = updateData;
   })
   .delete("/:id", authMiddleware, async(context) : Promise<{ message: string}> => {
