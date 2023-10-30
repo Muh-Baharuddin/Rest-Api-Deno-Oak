@@ -7,6 +7,7 @@ export interface Item {
   name: string;
   price: number;
   category: Category[];
+  image: string[];
   created_at: Date;
   updated_at: Date;
   created_by: User;
