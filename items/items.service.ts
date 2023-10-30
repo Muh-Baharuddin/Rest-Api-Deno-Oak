@@ -9,7 +9,18 @@ import { Category } from "/categories/categories.types.ts";
 import { User } from "/users/users.types.ts";
 
 export const getAllItems = async (): Promise<Item[]> => {
-  return await itemRepository.getAllItems();
+  const items = await itemRepository.getAllItems();
+
+  items.map((item) => {
+    const newUrl = item.image.map(url => {
+      const newUrl = `https://i.ibb.co/${url}`;
+      return newUrl;
+    })
+    item.image = newUrl;
+    return item;
+  })
+
+  return items;
 }
 
 export const getItemById = async (_id: string, context: Context): Promise<Item> => {
@@ -17,7 +28,7 @@ export const getItemById = async (_id: string, context: Context): Promise<Item> 
   const item = await itemRepository.getItemById(itemId);
   
   if(item === undefined) {
-    context.throw(401);
+    context.throw(400, "item not found");
   }
 
   item.image = await Promise.all(item.image.map(url => {
