@@ -28,6 +28,5 @@ export const findCode = async (email: string, verificationCode: string) => {
       verificationCode
     }
   )
-  console.log("find", find)
   return find;
 }
