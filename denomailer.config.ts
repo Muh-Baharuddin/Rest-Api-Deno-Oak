@@ -8,10 +8,8 @@ export const client  = new SMTPClient({
     port: 465,
     tls: true,
     auth: {
-      // username: Deno.env.get("MAILER_USERNAME")!,
-      // password: Deno.env.get("MAILER_PASSWORD")!,
-      username : "4519210022@univpancasila.ac.id",
-      password : "Mypasswordis1"
+      username: Deno.env.get("MAILER_USERNAME")!,
+      password: Deno.env.get("MAILER_PASSWORD")!,
     },
   },
 })
