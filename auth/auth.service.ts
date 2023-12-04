@@ -7,7 +7,7 @@ import { findUserByEmail, findUserByUsername, insertUser } from "/users/users.se
 import { LoginDto, RegisterDto } from "./dto/auth.dto.ts";
 import { User } from "/users/users.types.ts";
 import { ObjectId } from "$mongo/mod.ts";
-import { findVerifCode } from "/auth/verification/verification.service.ts";
+// import { findVerifCode } from "/auth/verification/verification.service.ts";
 
 export const login = async (userData: LoginDto, context: Context): Promise<TokenResponse> => {
   const findUser = await findUserByEmail(userData.email);
@@ -60,7 +60,7 @@ export const register = async (registerDto: RegisterDto, context: Context) => {
   const salt = bcrypt.genSaltSync(8);
   registerDto.password = bcrypt.hashSync(registerDto.password!, salt);
 
-  await findVerifCode(registerDto.email, registerDto.verificationCode, context)
+  // await findVerifCode(registerDto.email, registerDto.verificationCode, context) // deno mailer erorr port when deploy using deno deploy
 
   const newData = userByDto(registerDto);
 
